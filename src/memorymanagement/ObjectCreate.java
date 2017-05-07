@@ -1,7 +1,7 @@
 package memorymanagement;
 
 /**
- * Created by bryantchang on 2017/4/27.
+ * 验证对象如果不为实例中的字段赋初值默认都为字段所对应类型的零值
  */
 
 class ObjectTest {
