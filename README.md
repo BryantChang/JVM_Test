@@ -1,5 +1,9 @@
-# 《深入理解JAVA虚拟机》实验代码
+# Java实验代码
 
 ```
-本项目是本人在阅读《深入理解JAVA虚拟机》的过程中一些实验代码，还有一些为了帮助理解概念自己的一些尝试
+Java学习总结（持续更新中）
 ```
+
+
+* [面向对象编程](https://github.com/BryantChang/JVM_Test/tree/master/object_programming)
+* [Java高级开发](https://github.com/BryantChang/JVM_Test/tree/master/advanced_develop)
