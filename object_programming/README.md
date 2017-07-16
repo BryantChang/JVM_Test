@@ -1,3 +1,3 @@
 # 面向对象编程
 
-* 1、类与对象
+* [Java内存模型](https://github.com/BryantChang/JVM_Test/tree/master/object_programming/class_object)
