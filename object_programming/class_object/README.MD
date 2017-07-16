@@ -30,7 +30,8 @@ public class TestDemo {
     }
 }
 ```
-
+内存图：
+![IMG1](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/object_programming/class_object/imgs/img1.png)
 
 
 
