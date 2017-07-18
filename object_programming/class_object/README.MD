@@ -254,8 +254,49 @@ class Person{
     - 在一个类中会产生若干个对象，当前对象表示正在操作本类方法的对象
 
 
-### 引用传递应用
+### static 属性
 
+
+####举例
+
+```java
+
+Class Person{
+    String name;
+    int age;
+    String static country = "China";
+
+    public Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    public String getInfo() {
+        return this.name + "," + this.age + "," + this.country;
+    }
+}
+
+Class TestDemo{
+    public static void main(String[] args) {
+        Person per1 = new Person("aaa", 10);
+        Person per2 = new Person("bbb", 11);
+        Person per3 = new Person("ccc", 12);
+        System.out.println(per1.getInfo());
+        System.out.println(per2.getInfo());
+        System.out.println(per3.getInfo());
+    }
+}
+```
+
+![IMG8](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/object_programming/class_object/imgs/img8.png)
+
+* 传统属性所具备的特征就是保存在堆内存中，每个对象独享此属性。
+* 一次修改影响所有的对象。
+* static关键字定义的属性将不保存在堆内存之中，将会保存在方法区（全局数据区）中，并且所有对象都可以进行该数据区的访问。
+
+![IMG9](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/object_programming/class_object/imgs/img9.png)
+
+* 共享属性不能通过对象进行修改，可以利用类名称直接调用
 
 
 
