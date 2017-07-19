@@ -298,6 +298,171 @@ Class TestDemo{
 
 * 共享属性不能通过对象进行修改，可以利用类名称直接调用
 
+### static 方法
+
+* 所有static方法不允许调用非static定义的属性或方法
+
+### 代码块
+
+* 使用大括号定义的一段程序代码，代码块根据其位置以及声明其关键字的不同，能够分为普通代码块，静态代码块，构造块，同步代码块。
+
+* 普通代码块---定义在普通方法中
+
+```java
+public class TestDemo {
+    public static void main(String[] args) {
+        {
+            int x = 10;
+            System.out.println("x=" + x);
+        }
+        int x = 100;
+        System.out.println("x=" + x);
+    }
+}
+```
+
+* 构造块---定义在类中的代码块，构造块优先于构造方法执行
+* 可以进行一些简单的逻辑操作
+
+```java
+class Person {
+    {
+        System.out.println("构造块");
+    }
+
+    class Person(){
+        System.out.println("构造方法");
+    }
+}
+public class TestDemo {
+    public static void main(String[] args){
+        Person per1 = new Person();
+        Person per2 = new Person();
+    }
+}
+
+```
+
+* 静态块--使用static关键字定义的代码块，分为两种情况
+    - 在主类中定义：静态块优先于构造块执行，作用是为static属性初始化
+    - 在主类中定义：静态块优先于主方法执行。
+
+```java
+class Person {
+    {
+        System.out.println("构造块");
+    }
+
+    Person(){
+        System.out.println("构造方法");
+    }
+    static{
+        System.out.println("静态块");
+    }
+}
+public class TestDemo {
+    public static void main(String[] args){
+        Person per1 = new Person();
+        Person per2 = new Person();
+    }
+}
+
+```
+
+### 内部类
+
+* 一个类的内部嵌套其他类结构嵌套的操作语法形式
+* 破坏了程序的结构
+* 外部类的私有访问
+
+
+```java
+class Outer{
+    private String = "Hello World";
+    class Inner{
+        public void print() {
+            System.out.println(msg);
+        }
+    }
+    public void fun() {
+        Inner in = new Inner();
+        in.print();
+    }
+}
+
+
+public class TestDemo {
+    public static void main(String args[]) {
+        //声明内部类对象
+        Outer.Inner in = new Outer().new Inner();
+        in.print();
+    }
+}
+```
+
+* 外部类中存在有属性，只有实例化之后才能够被访问
+* 如果一个内部类只想被外部类使用，不希望产生内部类的实例化对象，可以用private定义
+* 如果在内部类中使用this，则需要使用外部类.this.属性名
+* static定义的内部类，从功能上就是外部类，该内部类只能访问外部类的static操作，类名为“外部类.内部类”
+
+#### 举例
+
+```java
+class Outer{
+    private static String = "Hello World";
+    static class Inner{//等同于外部类
+        public void print() {
+            System.out.println(msg);//此时只能引用外部类的static操作
+        }
+    }
+    public void fun() {
+        Inner in = new Inner();
+        in.print();
+    }
+}
+
+
+public class TestDemo {
+    public static void main(String args[]) {
+        //声明内部类对象
+        Outer.Inner in = new Outer.Inner();
+        in.print();
+    }
+}
+```
+
+### 在方法中定义内部类
+
+* 在方法中定义内部类的形式是最多的
+
+```java
+class Outer{
+    private String = "Hello World";
+    public void fun(int num) {
+        class Inner{
+            public void print() {
+                System.out.println("msg=" + msg);
+                System.out.println("num=" + num);
+            }
+        }
+        new Inner.print();
+    }
+}
+
+
+public class TestDemo {
+    public static void main(String args[]) {
+        //声明内部类对象
+        new Outer().print(100);
+    }
+}
+```
+
+* 在JDK1.8前是错误的，在JDK1.7及以前，如果一个内部类定义在了方法之中，该内部类要想访问方法中的参数，那么这个参数前必须使用final定义。
+* 内部类的特点：
+    - 破坏了程序的结构
+    - 方便的进行私有属性的访问，内部访问外部，外部访问内部
+
 
 
 
