@@ -760,11 +760,62 @@ public class TestDemo {
 Note:
 1、抽象类在实际的使用过程之中会定义一些固化的模式，它只会接收几种特定的指令
 2、每种指令的具体实现由子类负责完成，父类只负责进行方法的约定
+3、抽象类是单继承的，必须通过子类进行实例化处理
 ```
 
 
 
-### 接口
+### 接口 ---抽象方法和全局常量的集合
+
+* 避免单继承的局限
+* 在今后的开发中接口优先
+* 使用interface定义
+* 使用implements关键字实现接口
+* 一个子类可以实现多个接口，若其不是抽象类，则需要实现接口的所有抽象方法
+* 利用向上转型实例化子类对象类得到接口的实例化对象
+* 当一个子类实现了多个接口，并且接口对象通过子类进行实例化，那么这多个父接口之间是允许相互转换的
+
+
+#### 接口转换示意图
+
+![IMG11](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/object_programming/class_object/imgs/img11.png)
+
+```java
+interface IMessage {
+    public static final String MSG = "Hello World";
+    public void print();
+}
+interface INews {
+    public String get();
+}
+class MessageImpl implements IMessage,INews {
+    public void print(){
+        System.out.println(IMessage.MSG);
+    }
+
+    public String get() {
+        return IMessage.MSG;   //访问常量建议加上类名称  
+    }
+}
+public class TestDemo {
+    public static void main(String[] args) {
+        INews m = new MessageImpl();
+        IMessage ms = (IMessage) m;
+        m.print();
+    }
+}
+```
+
+
+
+
+
+
+
+
+
+
+
 
 
 
