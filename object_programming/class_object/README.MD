@@ -807,16 +807,112 @@ public class TestDemo {
 ```
 
 
+### 接口使用限制
+
+* 接口中只允许存在public权限（不写默认public）
+* 先使用extends 再用implements
+* 抽象类可以实现接口，接口不能继承抽象类
+* 
 
 
 
+#### 举例(错误的覆写)
+
+```java
+
+interface INews {
+    public String get();
+}
+
+class NewsImpl {
+    String get() {//权限更加严格了，无法成功覆写
+        return "hello world";  
+    }
+}
+
+public class TestDemo {
+    public static void main(String[] args) {
+       
+    }
+}
+```
 
 
 
+#### 举例(继承抽象类并实现接口)
+
+* 1：
+
+```java
+
+interface INews {
+    public String get();
+    public void print();
+}
+
+abstract class AbstractMessage implements INews{
+    public abstract void print();
+    public void print() {
+        System.out.println("abstract");
+    }
+}
 
 
+//重复标记
+class NewsImpl extends AbstractMessage {
+    public String get() {//权限更加严格了，无法成功覆写
+        return "hello world";  
+    }
+    public void print(){}
+}
+
+public class TestDemo {
+    public static void main(String[] args) {
+       INews news = new NewsImpl();
+       System.out.println(new.get());
+       AbstractMessage am = (AbstractMessage) news;
+       am.print();
+    }
+}
+```
 
 
+* 2：
+
+```java
+
+interface INews {
+    public String get();
+    public void print();
+}
+
+abstract class AbstractMessage implements INews{
+    public abstract void print();
+    public void print() {
+        System.out.println("abstract");
+    }
+}
+
+
+//重复标记
+class NewsImpl extends AbstractMessage implements INews{
+    public String get() {//权限更加严格了，无法成功覆写
+        return "hello world";  
+    }
+    public void print(){}
+}
+
+public class TestDemo {
+    public static void main(String[] args) {
+       INews news = new NewsImpl();
+       System.out.println(new.get());
+       AbstractMessage am = (AbstractMessage) news;
+       am.print();
+    }
+}
+```
+
+![IMG12](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/object_programming/class_object/imgs/img12.png)
 
 
 
