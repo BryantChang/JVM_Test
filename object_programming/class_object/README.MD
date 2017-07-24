@@ -473,10 +473,227 @@ public class TestDemo {
 ### 覆写
 
 * 子类定义了与父类相同的属性或方法
+    - 属性的覆盖
+    - 方法的覆写
 
 #### 方法覆写
 
-* 方法覆写指的是子类定义了与父类方法名称，参数个数与类型完全相同的方法。被覆写的方法不能够有比父类更严格的访问权限
+* 方法覆写指的是子类定义了与父类方法名称，参数个数与类型完全相同的方法。被覆写的方法不能够拥有比父类更严格的访问权限
+* 关注
+    - 当前使用的对象是哪个类实例化的，优先是被覆写过的方法
+    - private < default < public
+    - 如果父类方法使用private定义，则该方法只能被父类所使用，子类不知道父类存在该方法。
+
+### final关键字
+
+* final被称为终结器
+* final可以修饰类，方法，和常量（属性）
+    - 使用final定义的类不能有子类（String）
+    - 使用final定义的方法不允许被子类所覆写
+    - 使用final定义的变量就是常量，常量必须在声明时赋值，不允许被修改，在开发过程中会使用public static final 来定义全局常量（不用每个对象都有一个）
+
+### 多态性
+
+
+* 1、方法的多态性
+    - 方法的重载（同一个名称可以根据参数类型和个数的不同定义不同的方法体）
+    - 方法的覆写（同一个父类的方法可能根据实例化的对象不同也有个不同的实现）
+* 2、对象多态性（方法覆写）
+    - 对象的向上转型：父类 父类对象 = 子类实例---有传递性没有限制
+    - 对象的向下转型：子类 子类对象 = （子类）父类对象--当需要使用到子类扩充操作的时候
+    - 不是所有的父类对象都可以向下转型--首先要发生向上转型，否则会发生ClassCastException（两个没有关系的类发生转换）
+
+#### 举例（向上转型）
+
+```java
+class A {
+    public void print() {
+        System.out.println("print of A");
+    }
+}
+
+class B extends A {
+    public void print() {
+        System.out.println("print of B");
+    }
+}
+
+public class TestDemo {
+    public static void main(String[] args) {
+        A a = new B();//向上转型
+        a.print();
+    }
+}
+```
+
+#### 举例（向下转型）
+
+```java
+class A {
+    public void print() {
+        System.out.println("print of A");
+    }
+}
+
+class B extends A {
+    public void print() {
+        System.out.println("print of B");
+    }
+
+    public void funB() {
+        System.out.println("funB")
+    }
+}
+
+public class TestDemo {
+    public static void main(String[] args) {
+        A a = new B();//向上转型
+        B b = (B) a;
+        b.funB();
+    }
+}
+```
+
+* 直接进行向下转型可能存在隐患，需要首先进行判断，然后转型，利用instanceof关键字
+* 子类对象 instanceof 类， 返回boolean类型数据
+
+#### 举例(instanceof)
+
+```java
+class A {
+    public void print() {
+        System.out.println("print of A");
+    }
+}
+
+class B extends A {
+    public void print() {
+        System.out.println("print of B");
+    }
+
+    public void funB() {
+        System.out.println("funB")
+    }
+}
+
+public class TestDemo {
+    public static void main(String[] args) {
+        A a = new B();//向上转型
+        System.out.println(a instanceof A);
+        System.out.println(a instanceof B);
+        if(a instanceof B) {//避免ClassCastException
+            B b = (B) a;
+            b.funB();
+        }
+    }
+}
+```
+
+* 对象多态性实现的核心是方法的覆写
+* 向上转型可以实现接收参数的统一
+* 向下转型可以实现子类方法的扩充
+* 两个没有关系的类进行强制转换会出现ClassCastException
+
+### 抽象类定义和使用
+
+* 只声明而未实现的方法（抽象方法）--该方法所在的类需要使用abstract关键字修饰
+* 所有的抽象方法不包含方法体
+* 抽象类无法实例化--没有方法体，实例化对象可以调用类中的所有的操作
+* 所有的抽象类必须有子类
+* 抽象类的子类必须如果不是抽象类，则必须覆写父类中的所有抽象方法
+
+### 抽象类的相关规定
+
+* 抽象类中允许提供构造方法，子类实例化前也会先调用父类的构造方法。
+
+#### 举例
+
+```java
+abstract class Person {
+    private String name;
+    private int age;
+    public Person() {
+        System.out.println(".....");
+    }
+    public abstract String getInfo();
+}
+class Student extends Person {
+    private String school;
+    pubic Student() {
+        System.out.println("xxxxx");
+    }
+    public String getInfo() {
+        return null;
+    }
+}
+
+public class TestDemo {
+    public static void main(String[] args) {
+        new Student();
+    }
+
+}
+```
+
+* 因为抽象类中有属性，所有的属性要在对象实例化时进行空间的开辟，而实例化对象要依靠构造方法
+
+#### 举例（流程梳理）
+
+```java
+abstract class A {
+    public A() {//3、调用父类构造方法
+        this.print(); //4、调用被子类覆写的方法
+    }
+    public abstract void print();
+}
+
+class B extends A {
+    private int num = 100;//会开辟，但不会有值
+    public B(int num) {//2、调用子类实例化对象
+        super();//3、隐含一行语句，调用父类构造方法
+        this.num = num;
+    }
+
+    public void print() {//由于此时子类构造还未执行，所以所有的属性都为各自类型对应的默认值
+        System.out.println(this.num);
+    }
+}
+
+public class TestDemo {
+    ///结果为0 
+    new B(30); //1、实例化子类对象
+}
+```
+
+```
+说明：
+1、首先进行类加载
+2、进行类对象的空间开辟
+3、进行类对象的属性初始化（构造方法）
+4、抽象类中可以没有任何抽象方法，但依然无法进行实例化
+5、抽象类不能使用final进行声明
+6、抽象方法不能用private定义
+7、抽象类也分为内部抽象类和外部抽象类，内部抽象类可以使用static定义描述的是外部抽象类，如果外部抽象类上使用static被定义为语法错误
+```
+
+### 模板设计模式
+
+* 抽象类的特点是强制定义了子类的实现结构
+* 抽象类可以起到模板的作用
+
+
+![IMG10](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/object_programming/class_object/imgs/img10.png)
+
+#### 举例
+
+```java
+
+```
+
+
+
+
+
 
 
 
