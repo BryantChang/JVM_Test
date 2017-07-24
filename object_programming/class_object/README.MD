@@ -687,11 +687,84 @@ public class TestDemo {
 #### 举例
 
 ```java
+abstract class Action {
+    public static final int EAT = 1;
+    public static final int SLEEP = 5;
+    public static final int WORK = 10;
+    public abstract void eat();
+    public abstract void sleep();
+    public abstract void work();
+    public void command(int cmd) {
+        switch(cmd) {
+            case EAT:
+                this.eat();
+                break;
+            case SLEEP:
+                this.sleep();
+                break;
+            case WORK:
+                this.work();
+                break; 
+            case WORK+EAT+SLEEP:
+                this.eat();
+                this.sleep();
+                this.work();
+                break; 
+        }
+    }
+}
 
+class Human extends Action {
+    public void eat(){
+        System.out.println("Human eat");
+    }
+    public void sleep(){
+        System.out.println("Human sleep");
+    }
+    public void work(){
+        System.out.println("Human work");
+    }
+}
+
+class Pig extends Action {
+    public void eat(){
+        System.out.println("Pig eat");
+    }
+    public void sleep(){
+        System.out.println("Pig sleep");
+    }
+    public void work(){}
+}
+
+class Robot extends Action {
+    public void eat(){
+        System.out.println("Robot eat");
+    }
+    public void sleep(){}
+    public void work(){
+        System.out.println("Robot work");
+    }
+}
+
+public class TestDemo {
+    public static void main(String[] args) {
+        fun(Human);
+    }
+    public static void fun(Action action) {
+        action.command(Action.EAT + Action.SLEEP + Action.WORK);
+    }
+}
+```
+
+```
+Note:
+1、抽象类在实际的使用过程之中会定义一些固化的模式，它只会接收几种特定的指令
+2、每种指令的具体实现由子类负责完成，父类只负责进行方法的约定
 ```
 
 
 
+### 接口
 
 
 
