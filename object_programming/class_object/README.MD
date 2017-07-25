@@ -812,7 +812,8 @@ public class TestDemo {
 * 接口中只允许存在public权限（不写默认public）
 * 先使用extends 再用implements
 * 抽象类可以实现接口，接口不能继承抽象类
-* 
+* 接口可以继承多个父接口
+* 使用static定义的内部接口相当于外部接口
 
 
 
@@ -913,6 +914,160 @@ public class TestDemo {
 ```
 
 ![IMG12](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/object_programming/class_object/imgs/img12.png)
+
+
+### 接口定义标准
+
+* 定义操作标准
+* 表示能力
+* 在分布式开发之中暴露远程调用方法
+
+
+### 工厂设计模式
+
+* 常用设计模式
+    - 单例
+    - 代理
+    - 工厂
+
+#### 举例--在进行类设计的时候首先定义接口，而后接口要通过子类才可以进行对象实例化
+
+```java
+interface IFruit{
+    public void eat();
+}
+
+class Apple implements IFruit {
+    public void eat() {
+        System.out.println("eat apple");
+    }
+}
+
+class Orange implements IFruit {
+    public void eat() {
+        System.out.println("eat orange");
+    }
+}
+
+public class TestDemo {
+    public static void main(String[] args) {
+        IFruit fruit = new Apple();
+        fruit.eat();
+    }
+}
+```
+
+
+#### 举例---工厂实现
+
+
+```java
+interface IFruit{
+    public void eat();
+}
+
+class Factory {
+    public static IFruit getInstance(String className) {
+        if("apple".equals(className)) {
+            return new Apple();
+        }
+        if("orange".equals(className)) {
+            return new Orange();
+        }
+    }
+}
+
+class Apple implements IFruit {
+    public void eat() {
+        System.out.println("eat apple");
+    }
+}
+
+class Orange implements IFruit {
+    public void eat() {
+        System.out.println("eat orange");
+    }
+}
+
+public class TestDemo {
+    public static void main(String[] args) {
+        IFruit fruit = new Apple();
+        fruit.eat();
+    }
+}
+```
+
+### 代理设计模式
+
+* 两个子类同时实现一个接口，一个处理真实业务，另一个负责辅助实现
+* 代理的本质：所有的真实业务操作都会有一个与之辅助的功能类共同完成
+
+![IMG13](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/object_programming/class_object/imgs/img13.png)
+
+#### 举例
+
+```java
+Interface ISubject {
+    public void save();
+}
+
+class RealSubject implements ISubject {
+    public void save(){
+        System.out.println("save!!");
+    }
+}
+
+class ProxySubject implements ISubject {
+
+    private ISubject subject; //真正的操作业务
+    public ProxySubject(ISubject subject) {
+        this.subject = subject;
+    }
+    public void prepare1() {
+        System.out.println("prepare1");
+    }
+    public void end() {
+        System.out.println("end");
+    }
+    public void save(){
+        this.prepare1();
+        this.subject.save();//调用真实的业务
+        this.end();
+    }
+}
+
+public class TestDemo {
+    public static void main(String[] args) {
+        ISubject sub = new ProxySubject(new RealSubject);
+        sub.save();
+    }
+}
+```
+
+### 抽象类与接口的区别(面试题)
+
+* 关键字：
+    - 抽象类：abstract class className  
+    - 接口：interface name
+* 组成结构（抽象类）：
+    - 抽象类：抽象方法，普通方法，全局常量，全局变量，属性，构造方法
+    - 接口：全局常量，抽象方法
+* 访问权限：
+    - 抽象类：能够使用任意权限
+    - 接口：只允许使用public权限
+* 子类使用：
+    - 抽象类：子类使用extends继承抽象类
+    - 接口：子类使用implements实现接口
+* 关系：
+    - 抽象类：一个抽象类可以实现若干个接口
+    - 接口：一个接口不能继承抽象类，但可以使用extends实现多个父接口
+* 子类限制：
+    - 抽象类：一个子类只能继承一个抽象类
+    - 接口：一个子类能够实现多个接口
+
+
+![IMG14](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/object_programming/class_object/imgs/img14.png)
+
 
 
 
