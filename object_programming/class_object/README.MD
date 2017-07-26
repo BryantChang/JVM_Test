@@ -1252,6 +1252,101 @@ try{
 * throws不处理，只抛出异常
 * 调用使用throws声明的方法，必须使用try...catch
 * throw是编写在语句之中的，人为的进行异常的抛出
+* throw需要结合if判断来使用
+
+### 举例
+
+```java
+
+class MyMath {
+    public static int div(int x, int y) throws Exception{
+        return x/y;
+    }
+}
+
+public class TestDemo {
+    public static void main(String[] args) {
+        try {
+            throw new Exception("new Exception");
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+### 异常处理的格式---进行除法操作
+
+* 进行除法操作前打印一行语句
+* 如果在除法计算过程中出现错误，则将异常返回给调用处
+* 不管是否出现异常，都打印计算结束信息
+
+```java
+class MyMath {
+    public static int div(int x, int y) throws Exception{
+        int result = 0;
+        System.out.println("start");
+        try{
+            result = x/y;
+        }catch(Exception e) {
+            throw e;
+        }finally {
+            System.out.println("end");
+        }
+        return result;
+    }
+}
+
+public class TestDemo {
+    public static void main(String[] args) {
+        try {
+            System.out.println(MyMath.div(10, 2));
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+#### 直接使用try...finally
+
+```java
+class MyMath {
+    public static int div(int x, int y) throws Exception{
+        int result = 0;
+        System.out.println("start");
+        try{
+            result = x/y;
+        }finally {
+            System.out.println("end");
+        }
+        return result;
+    }
+}
+
+public class TestDemo {
+    public static void main(String[] args) {
+        try {
+            System.out.println(MyMath.div(10, 2));
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+### RuntimeException
+
+* RuntimeException定义的异常类可以不用强制性进行异常处理
+* Excetion 与 RuntimeException的区别
+    - Excetion是RuntimeException的父类，使用Excetion定义的异常都需要进行异常处理，而RuntimeException可由用户进行选择
+* 常见的RuntimeExcetion
+    - NumberFormatException ClassCastException NullPointerException
+
+
+
+
+
 
 
 
