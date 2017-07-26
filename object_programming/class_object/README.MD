@@ -1068,6 +1068,194 @@ public class TestDemo {
 
 ![IMG14](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/object_programming/class_object/imgs/img14.png)
 
+### 匿名内部类
+
+* 某个子类只使用一次
+* 匿名内部类基本上都是在接口或抽象类中完成
+
+```java
+interface IMessage {
+    public void print();
+}
+
+public class TestDemo {
+    public static void main(String[] args) {
+       IMessage msg = new IMessage() {
+            public void print() {
+                System.out.println("hello world");
+            }
+       };
+       fun(msg);
+    }
+
+    public static void fun(IMessage tmp) {
+        tmp.print();
+    }
+}
+```
+
+### Object类
+
+* 除了Object类外都会存在继承关系
+* Object类是参数的最高统一类型
+* Object类的方法
+    - 无参构造
+    - toString()取得对象信息 String 对象遇到“+” 全部向String转型
+    - equals() 对象比较
+
+### equals 方法
+
+```java
+class Person {
+    private String name;
+    private int age;
+    public Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    public boolean equals(Object other) {
+        if(other == null) {
+            return false;
+        }
+        if(this == other) {
+            return true;
+        }
+        if(! (other instanceof Person)) {
+           return false
+        }
+        Person per = (Person) other;
+        return this.name.equals(per.name) && (this.age == other.age);
+    }
+}
+
+public class TestDemo {
+    public static void main(String[] args) {
+        ISubject sub = new ProxySubject(new RealSubject);
+        sub.save();
+    }
+}
+
+```
+### 包装类
+
+* 数据类型分为基本数据类型和引用数据类型
+* 将基本数据类型包装为一个类对象本质是方便Object类进行接收处理
+* 有两种包装类型
+    - 对象型（Object的直接子类---Boolean Character）
+    - 数值型（Number的直接子类---Byte Double Short Long Integer Float）
+* Number类定义：
+    - Number是抽象类
+    - intValue() byteValue() longValue() floatValue() shortValue byteValue()
+
+```java
+public abstract class Number extends Object implements Serializable
+```
+
+### 装箱与拆箱
+
+* 装箱：将基本数据类型变为应用对象（利用构造方法）
+* 拆箱：将对象中包装的基本数据类型取出
+* 自动装箱与拆箱：
+
+```java
+public class TestDemo {
+    public static void main(String[] args) {
+        Integer num1 = 10; //自动装箱
+        Integet num2 = 10;
+        System.out.println(num1 == num2); //true
+        System.out.pringln(num1.equals(new Integer(num2)));//true
+        System.out.pringln(num1 == new Integer(num2));//false
+    }
+}
+```
+* 使用int还是Integer:
+    - 接收数据的时候用int，保存数据时使用Integer
+
+### 单例模式
+
+* 单例设计指的是一个类只允许产生一个实例化对象
+* 一个类中只产生一个对象
+
+* 饿汉式：不管是否实例化对象，只要该类加载，就会创建好一个instance对象
+
+```java
+class Singleton{
+    private final static Singleton INSTANCE = new Singleton();
+    private Singleton() {}
+    public static Singleton getInstance() {
+        return instance;
+    }
+    public void print() {
+        System.out.println("Hello World");
+    }
+}
+
+public class TestDemo {
+    public static void main(String[] args) {
+        Singleton s = null;
+        s = Singleton.getInstance();
+        s.print();
+    }
+}
+```
+
+* 懒汉式：当我们第一次使用Singleton类对象才会为其进行实例化处理操作
+
+
+class Singleton{
+    private static Singleton instance = new Singleton();
+    private Singleton() {}
+    public static Singleton getInstance() {
+        if(instance == null) {
+            instance = new Singleton(); 
+        }
+        return instance;
+    }
+    public void print() {
+        System.out.println("Hello World");
+    }
+}
+
+public class TestDemo {
+    public static void main(String[] args) {
+        Singleton s = null;
+        s = Singleton.getInstance();
+        s.print();
+    }
+}
+```
+
+### Java 异常处理
+
+* 异常是导致程序中断执行的指令流
+* 为了保证程序出现异常后继续正常执行，就需要进行异常处理
+* 直接输出异常类对象或调用e.printStackTrace()方法
+
+
+### 异常处理格式
+
+```java
+try{
+    可能出现异常的语句
+}[catch(异常类 对象) {
+    异常处理语句
+}][finally {
+    异常统一出口
+}]
+```
+
+* try...catch
+* try...finally
+* try...catch...finally
+
+* throws不处理，只抛出异常
+* 调用使用throws声明的方法，必须使用try...catch
+* throw是编写在语句之中的，人为的进行异常的抛出
+
+
+
+
 
 
 
