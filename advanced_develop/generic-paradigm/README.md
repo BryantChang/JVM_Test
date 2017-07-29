@@ -103,6 +103,171 @@ public class TestDemo {
 
 ### 通配符
 
+* 泛型可以避免ClassCastException, 但会出现参数统一问题
+
+#### 举例
+
+```java
+class Message<T> {
+    private T note;
+
+    public T getNote() {
+        return note;
+    }
+
+    public void setNote(T note) {
+        this.note = note;
+    }
+}
+
+public class TestDemo {
+    public static void main(String[] args) {
+        Message<String> msg = new Message<String>();
+        msg.setNote("hello world");
+        fun(msg);
+    }
+
+    public static void fun(Message<String> tmp) {
+        System.out.println(tmp.getNote());
+    }
+}
+```
+
+
+![IMG1](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/advanced_develop/generic-paradigm/imgs/img1.png)
+
+* 通配符：可以接收所有的泛型类型，但又不能允许随意修改
+
+```java
+class Message<T> {
+    private T note;
+
+    public T getNote() {
+        return note;
+    }
+
+    public void setNote(T note) {
+        this.note = note;
+    }
+}
+
+public class TestDemo {
+    public static void main(String[] args) {
+        Message<String> msg = new Message<String>();
+        msg.setNote("hello world");
+        fun(msg);
+    }
+
+    //使用通配符"?"描述的是可以接受任意类型,但由于不确定类型,所以无法修改
+    public static void fun(Message<?> tmp) {
+        System.out.println(tmp.getNote());
+    }
+}
+```
+
+* 在?的基础上出现了两个子通配符
+    - ?extends类--设置泛型上限
+        + ? extends Number,表示只能设置Number或其子类，如Integer，Double等(定义类或方法)
+    - ?super类--设置泛型下限
+        + ? extends String,表示只能设置String或Object(定义方法)
+
+### 泛型接口
+
+* 接口实现子类继续使用泛型
+
+```java
+package tongpeifu;
+
+/**
+ * Created by bryantchang on 2017/7/29.
+ */
+interface IMessage<T> {
+    public void print(T t);
+}
+
+//子类定义继续使用泛型
+class MessageImpl<T> implements IMessage<T> {
+    @Override
+    public void print(T t) {
+        System.out.println(t);
+    }
+}
+
+public class TestDemo {
+    public static void main(String[] args) {
+        IMessage<String> msg = new MessageImpl<String>();
+        msg.print("Hello World");
+    }
+}
+
+```
+
+* 接口实现子类明确给出类型
+
+```java
+package tongpeifu;
+
+/**
+ * Created by bryantchang on 2017/7/29.
+ */
+interface IMessage<T> {
+    public void print(T t);
+}
+
+//子类定义继续使用泛型
+class MessageImpl implements IMessage<String> {
+    @Override
+    public void print(String t) {
+        System.out.println(t);
+    }
+}
+
+public class TestDemo {
+    public static void main(String[] args) {
+        IMessage<String> msg = new MessageImpl<String>();
+        msg.print("Hello World");
+    }
+}
+
+```
+
+
+### 泛型方法
+
+* 泛型方法可以单独定义
+
+```java
+public class TestDemo {
+    public static void main(String[] args) {
+        Integer data[] = fun(1,2,3,4);
+        for (int tmp: data) {
+            System.out.println(tmp);
+        }
+    }
+    //泛型标记的声明
+    public static <T> T[] fun(T ... args) {
+        return args;
+    }
+}
+```
+
+
+### Annotation(注解)
+
+
+* 1、在进行项目开发过程中，会将所有使用到的第三方信息或是程序有关的操作都写进程序里
+
+![IMG2](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/advanced_develop/generic-paradigm/imgs/img2.png)
+
+
+
+
+### lambda表达式
+
+* Lambda从jdk1.8开始推出的重要新特性，函数式编程
+* 使用匿名内部类实现接口优点是节约一个文件
+* 面向对象要求结构必须完整 
+* @FunctionalInterface表示一个函数式编程的接口，只允许有一个方法
 
 
 
