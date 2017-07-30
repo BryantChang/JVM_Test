@@ -237,6 +237,7 @@ class Message {
     - 构造方法:this(参数)--this调用必须是构造器的第一行语句，并且留有出口
 
 #### 举例：
+
 ```java
 class Person{
     private String name;
@@ -250,6 +251,7 @@ class Person{
     }
 }
 ```
+
 * 表示当前对象
     - 在一个类中会产生若干个对象，当前对象表示正在操作本类方法的对象
 
@@ -1137,6 +1139,7 @@ public class TestDemo {
 }
 
 ```
+
 ### 包装类
 
 * 数据类型分为基本数据类型和引用数据类型
@@ -1169,6 +1172,7 @@ public class TestDemo {
     }
 }
 ```
+
 * 使用int还是Integer:
     - 接收数据的时候用int，保存数据时使用Integer
 
@@ -1202,7 +1206,7 @@ public class TestDemo {
 
 * 懒汉式：当我们第一次使用Singleton类对象才会为其进行实例化处理操作
 
-
+```java
 class Singleton{
     private static Singleton instance = new Singleton();
     private Singleton() {}

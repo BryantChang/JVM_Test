@@ -89,8 +89,10 @@ private native void start0();
 ![IMG2](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/advanced_develop/multi-thread/imgs/img2.png)
 
 
+### 实现Runnable接口
 
 
+* Thread有单继承的局限
 
 
 
