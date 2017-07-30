@@ -95,6 +95,114 @@ private native void start0();
 * Thread有单继承的局限
 
 
+#### Runnable 接口定义
+
+```java
+@FunctionalInterface//函数式接口，只有一个方法，run()
+public interface Runnable {
+    public abstract void run();
+}
+```
+
+
+* 利用Runnable定义线程主体类
+
+
+```java
+class MyThread implements Runnable {
+    private String title;
+
+    public MyThread(String title) {
+        this.title = title;
+    }
+    @Override
+    public void run() {
+        for (int i = 0; i < 1000; i++) {
+            System.out.println(this.title + ",x=" + i);
+        }
+    }
+}
+```
+
+
+* 启动多线程
+* 多线程的启动都是使用Thread类的start()方法
+
+```java
+public class TestDemo {
+    public static void main(String[] args)  {
+        MyThread mt1 = new MyThread("thread1");
+        MyThread mt2 = new MyThread("thread2");
+        MyThread mt3 = new MyThread("thread3");
+        new Thread(mt1).start();
+        new Thread(mt2).start();
+        new Thread(mt3).start();
+    }
+}
+
+
+public class TestDemo {
+    public static void main(String[] args)  {
+//        MyThread mt1 = new MyThread("thread1");
+//        MyThread mt2 = new MyThread("thread2");
+//        MyThread mt3 = new MyThread("thread3");
+        new Thread(()-> System.out.println("Hello World")).start();
+
+    }
+}
+```
+
+
+### Thread 和 Runnable的区别
+
+* 使用形式，Runnable使用更好，避免了多继承
+
+
+```java
+public class Thread implements Runnable
+
+//run()方法
+
+@Override
+public void run() {
+    if (target != null) {
+        target.run();
+    }
+}
+
+//构造方法
+public Thread(Runnable target) {
+    init(null, target, "Thread-" + nextThreadNum(), 0);
+}
+
+
+//init方法
+
+private void init(ThreadGroup g, Runnable target, String name,
+                  long stackSize) {
+    init(g, target, name, stackSize, null);
+}
+
+
+private void init(ThreadGroup g, Runnable target, String name,
+                  long stackSize, AccessControlContext acc) {
+    ...
+    this.target = target;
+    ...
+}
+```
+
+
+### 线程的继承结构
+
+![IMG3](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/advanced_develop/multi-thread/imgs/img3.png)
+
+
+* 在多线程的处理上使用了代理设计模式，在实际卡法中，使用Runnable有一个特点，使用Runnable实现的多线程的程序类，可以更好地描述数据共享的概念（并不是Thread不能）
+
+
+
+
 
 
 
