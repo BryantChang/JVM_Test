@@ -466,9 +466,43 @@ public class TestDemo {
 }
 ```
 
+* 这种实现方式实在方法里拦截的，也就是说进入到方法中的线程还会有很多个
 
 
+* 同步方法
 
+```java
+class MyThread implements Runnable {
+    private int ticket = 10;
+    @Override
+    public void run() {
+        for (int x = 0; x < 20; x++) {
+            this.sale();
+        }
+    }
+
+    public synchronized void sale() {
+        if(this.ticket > 0) {
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println(Thread.currentThread().getName() + "卖票, ticket=" + this.ticket--);
+        }
+    }
+}
+public class TestDemo {
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
+        MyThread mt = new MyThread();
+        new Thread(mt, "A").start();
+        new Thread(mt, "B").start();
+        new Thread(mt, "C").start();
+    }
+}
+```
+
+* 同步虽然可以保证线程安全操作，但执行速度会很慢
 
 
 
