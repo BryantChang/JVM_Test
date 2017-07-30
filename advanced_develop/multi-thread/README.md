@@ -249,14 +249,44 @@ public class TestDemo {
 ### 线程状态
 
 * 线程启动使用的是start方法，但不意味着调用了start方法就立刻开始执行
+* 线程执行需要分配资源，资源不能独占，执行一段时间后需要让出资源，重新等待资源分配
 
 ![IMG5](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/advanced_develop/multi-thread/imgs/img5.png)
 
 
+### Callable实现多线程（JDK1.5 java.util.concurrent）
 
 
+```java
+public interface Callable<V>
+V call() throws Exception;
+```
+
+* Runnable 的run方法没有返回值 Callable的call方法有返回值
+
+#### 使用Callable定义线程主体类
 
 
+```java
+class MyThread implements Callable<String> {
+    private int ticket = 10;
+
+    @Override
+    public String call() throws Exception {
+        for (int x = 0; x < 20; x++) {
+            if(this.ticket > 0) {
+                System.out.println("sale, ticket=" + this.ticket);
+            }
+        }
+        return "票卖完了,下次吧!!";
+    }
+}
+```
+
+
+* 多线程的启动只能通过Thread类的start方法来启动
+
+![IMG6](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/advanced_develop/multi-thread/imgs/img6.png)
 
 
 
