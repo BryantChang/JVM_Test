@@ -44,57 +44,31 @@ import java.util.concurrent.FutureTask;
 //集成Thread类,继承Thread类,复写run方法
 
 
-class MyThread implements Runnable {
-    private int ticket = 1000;
+class MyThread extends Thread {
+    private String title;
+
+    public MyThread(String title) {
+        this.title = title;
+    }
+
+
     @Override
     public void run() {
-        for (int i = 0; i < 2000; i++) {
-//            synchronized (this) {//同一时刻只能允许一个线程进入
-//                if(this.ticket > 0) {
-//                    try {
-//                        Thread.sleep(200);
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
-//                    System.out.println(Thread.currentThread().getName() + "卖票,ticket = " + this.ticket--);
-//                }
-//            }
-            this.sale();
-        }
-    }
-    public synchronized void sale() {
-        if(this.ticket > 0) {
-            try {
-                Thread.sleep(20);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            System.out.println(Thread.currentThread().getName() + "卖票,ticket = " + this.ticket--);
+        for (int i = 0; i < 1000; i++) {
+            System.out.println(this.title + ",x=" + i);
         }
     }
 }
 
-class MyThreadCallable implements Callable<String> {
-    @Override
-    public String call() throws Exception {
-        for (int i = 0; i < 2000; i++) {
-            System.out.println("买票x=" + i);
-        }
-        return "票卖完了";
-    }
-}
+
 public class TestDemo {
-    public static void main(String[] args) throws ExecutionException, InterruptedException {
-        MyThread mt = new MyThread();
-        Thread t1 = new Thread(mt, "A");
-        Thread t2 = new Thread(mt, "B");
-        Thread t3 = new Thread(mt, "C");
-        t1.setPriority(Thread.MIN_PRIORITY);
-        t1.start();
-        t2.start();
-        t3.start();
-//        FutureTask<String> task = new FutureTask(new MyThreadCallable());
-//        new Thread(task).start();
-//        System.out.println(task.get());
+    public static void main(String[] args)  {
+        MyThread mt1 = new MyThread("thread1");
+        MyThread mt2 = new MyThread("thread2");
+        MyThread mt3 = new MyThread("thread3");
+        mt1.start();
+        mt2.start();
+        mt3.start();
+
     }
 }
