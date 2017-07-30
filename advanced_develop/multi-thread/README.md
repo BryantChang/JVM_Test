@@ -429,6 +429,42 @@ public class TestDemo {
 
 ![IMG9](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/advanced_develop/multi-thread/imgs/img9.png)
 
+* 如果想要实现锁的功能，可以使用synchronized关键字来进行处理，有两种模式
+    - 同步代码块
+    - 同步方法
+
+* 同步代码块，一般可以锁定当前对象
+
+```java 
+class MyThread implements Runnable {
+    private int ticket = 10;
+    @Override
+    public void run() {
+        for (int x = 0; x < 20; x++) {
+            synchronized (this) {
+                if(this.ticket > 0) {
+                    try {
+                        Thread.sleep(200);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    System.out.println(Thread.currentThread().getName() + "卖票, ticket=" + this.ticket--);
+                }
+            }
+        }
+    }
+}
+
+
+public class TestDemo {
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
+        MyThread mt = new MyThread();
+        new Thread(mt, "A").start();
+        new Thread(mt, "B").start();
+        new Thread(mt, "C").start();
+    }
+}
+```
 
 
 
