@@ -200,6 +200,52 @@ private void init(ThreadGroup g, Runnable target, String name,
 
 * 在多线程的处理上使用了代理设计模式，在实际卡法中，使用Runnable有一个特点，使用Runnable实现的多线程的程序类，可以更好地描述数据共享的概念（并不是Thread不能）
 
+### 使用Thread实现数据操作---产生若干个线程进行同一数据处理操作
+
+```java
+class MyThread extends Thread {
+    private int ticket = 10;
+
+    @Override
+    public void run() {
+        for (int x = 0; x < 20; x++) {
+            if(this.ticket > 0) {
+                System.out.println("sale, ticket=" + this.ticket);
+            }
+        }
+    }
+}
+
+public class TestDemo {
+    public static void main(String[] args)  {
+        MyThread mt1 = new MyThread();
+        MyThread mt2 = new MyThread();
+        MyThread mt3 = new MyThread();
+        mt1.start();
+        mt2.start();
+        mt3.start();
+    }
+}
+```
+
+* 内存关系
+
+
+```java
+public class TestDemo {
+    public static void main(String[] args)  {
+        MyThread mt = new MyThread();
+        new Thread(mt).start();
+        new Thread(mt).start();
+        new Thread(mt).start();
+    }
+}
+```
+
+![IMG4](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/advanced_develop/multi-thread/imgs/img4.png)
+
+* Thread子类有start()方法，还要调用其他的start()方法，而Runnable子类更自然
+
 
 
 
