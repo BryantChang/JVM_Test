@@ -44,23 +44,29 @@ import java.util.concurrent.FutureTask;
 //集成Thread类,继承Thread类,复写run方法
 
 
-class MyThread implements Callable<String> {
+class MyThread implements Runnable {
     private int ticket = 10;
-
     @Override
-    public String call() throws Exception {
+    public void run() {
         for (int x = 0; x < 20; x++) {
             if(this.ticket > 0) {
-                System.out.println("sale, ticket=" + this.ticket);
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                System.out.println(Thread.currentThread().getName() + "卖票, ticket=" + this.ticket--);
             }
         }
-        return "票卖完了,下次吧!!";
     }
 }
 
 
 public class TestDemo {
-    public static void main(String[] args)  {
-
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
+        MyThread mt = new MyThread();
+        new Thread(mt, "A").start();
+        new Thread(mt, "B").start();
+        new Thread(mt, "C").start();
     }
 }

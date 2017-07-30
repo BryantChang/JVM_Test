@@ -289,6 +289,156 @@ class MyThread implements Callable<String> {
 ![IMG6](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/advanced_develop/multi-thread/imgs/img6.png)
 
 
+### 多线程的常用操作方法
+
+* 多线程的运行状态时不确定的
+* Thread类有关名称的方法
+    - 构造方法
+    - 设置名称
+    - 获取名称
+
+```java
+public Thread(Runnable target, String name) {
+        init(null, target, name, 0);
+    }
+```
+
+```java
+public final synchronized void setName(String name) {
+    checkAccess();
+    if (name == null) {
+        throw new NullPointerException("name cannot be null");
+    }
+
+    this.name = name;
+    if (threadStatus != 0) {
+        setNativeName(name);
+    }
+}
+```
+
+```java
+public final String getName() {
+    return name;
+}
+```
+
+
+* 线程执行过程
+
+![IMG7](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/advanced_develop/multi-thread/imgs/img7.png)
+
+
+* 在Thread类中提供有取得当前线程对象的方法
+
+```java
+public static Thread currentThread()
+```
+
+```java
+class MyThread implements Runnable {
+    @Override
+    public void run() {
+        System.out.println(Thread.currentThread().getName());
+    }
+}
+
+
+public class TestDemo {
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
+        MyThread mt = new MyThread();
+        mt.run();//main
+        new Thread(mt).start();
+    }
+}
+
+```
+
+* 主方法本身就是一个线程，所有线程都是由主线程启动的
+* 每当使用java命令来解释程序的时候，表示启动一个新的JVM进程，主方法是其中的一个线程
+
+
+#### 线程休眠
+
+* 所谓的线程休眠指的是让线程暂缓执行，到指定时间后恢复运行
+
+```java
+public static void sleep(long millis) throws InterruptedException
+```
+
+* 所有的线程使依次进入到run()方法中的。
+* 真正进入到方法的对象可能是多个，也可能是一个，进入代码的顺序可能有差异，但总体上线程之间的执行是并发执行
+
+
+#### 线程优先级
+
+* 所谓的线程优先级指的是优先级越高，越有可能先执行，在Thread类中提供有如下的优先级设置方法
+    - 设置优先级：public final void setPriority(int newPriority)
+    - 取得优先级：public final int getPriority()
+    - 最高优先级：public final static int MAX_PRIORITY = 10;
+    - 中等优先级：public final static int NORM_PRIORITY = 5;
+    - 最低优先级：public final static int MIN_PRIORITY = 1;
+* 主方法只是一个中等优先级
+
+### 同步与死锁
+
+* 概念要理解--核心问题：每一个县城对象操作的延迟问题或轮番抢占资源的问题
+
+#### 举例 -- 希望让其可以实现多个线程卖票的处理
+
+* 初期实现
+
+```java
+class MyThread implements Runnable {
+    private int ticket = 10;
+    @Override
+    public void run() {
+        for (int x = 0; x < 20; x++) {
+            if(this.ticket > 0) {
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                System.out.println(Thread.currentThread().getName() + "卖票, ticket=" + this.ticket--);
+            }
+        }
+    }
+}
+
+
+public class TestDemo {
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
+        MyThread mt = new MyThread();
+        new Thread(mt, "A").start();
+        new Thread(mt, "B").start();
+        new Thread(mt, "C").start();
+    }
+}
+```
+
+* 票数出现了0和负数
+* 不同步问题
+
+![IMG8](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/advanced_develop/multi-thread/imgs/img8.png)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
