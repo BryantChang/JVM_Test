@@ -419,12 +419,15 @@ public class TestDemo {
 
 * 票数出现了0和负数
 * 不同步问题
+    - 不同步的好处是处理速度快
 
 ![IMG8](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/advanced_develop/multi-thread/imgs/img8.png)
 
+#### 同步的处理
 
+* 所谓的同步指的是所有的线程不是一起进入到方法中执行，而是按照顺序一个一个进来
 
-
+![IMG9](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/advanced_develop/multi-thread/imgs/img9.png)
 
 
 
