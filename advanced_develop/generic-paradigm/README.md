@@ -256,8 +256,40 @@ public class TestDemo {
 
 
 * 1、在进行项目开发过程中，会将所有使用到的第三方信息或是程序有关的操作都写进程序里
+    - 如果服务器的地址更换了，就意味着需要修改源代码
 
 ![IMG2](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/advanced_develop/generic-paradigm/imgs/img2.png)
+
+* 2、使用一个配置文件，程序在运行时要通过配置文件读取相关内容，可以在不修改源代码的前提下实现项目的变更
+    - 当使用配置文件之后，虽然代码的维护方便了，在开发中不是很方便，非专业人士很难修改
+    - 配置文件数量可能非常庞大，可能使得开发者迷惑
+
+![IMG3](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/advanced_develop/generic-paradigm/imgs/img3.png)
+
+* 3、将配置写回到程序中，形成了注解的概念
+    - 写了注解不代表不需要写配置文件
+    - JDK内置的注解
+        + @Override
+        + @Deprecated
+        + @SuppressWarnings
+
+### @Override（准确覆写）
+
+* 方法覆写：发生在继承关系中，子类定义了与父类的方法名称相同，参数个数与类型，返回值类型相同的方法
+* @Override检测覆写是否成功
+
+
+### @Deprecated(过期声明)
+
+* 从某个特定的版本之后，不在使用该程序类
+
+
+### @SuppressWarnings(压制警告)
+
+### 接口定义加强（JDK1.8新特性）
+
+* 可以使用default来定义普通方法,需要对象调用
+* 可以使用static定义静态方法，需要接口名就能调用
 
 
 

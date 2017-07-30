@@ -89,7 +89,7 @@ public class TestDemo {
 }
 ```
 
-![IMG3](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/object_programming/class_object/imgs/img3.png)
+imgs
 
 ```java
 class Person {
