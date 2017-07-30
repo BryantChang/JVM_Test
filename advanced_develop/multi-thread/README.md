@@ -246,6 +246,12 @@ public class TestDemo {
 
 * Thread子类有start()方法，还要调用其他的start()方法，而Runnable子类更自然
 
+### 线程状态
+
+* 线程启动使用的是start方法，但不意味着调用了start方法就立刻开始执行
+
+![IMG5](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/advanced_develop/multi-thread/imgs/img5.png)
+
 
 
 
