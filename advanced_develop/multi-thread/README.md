@@ -9,4 +9,4 @@
 ### 举例：服务器应用
 
 
-![IMG1](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/advanced_develop/multy-thread/imgs/img1.png)
+![IMG1](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/advanced_develop/multi-thread/imgs/img1.png)
