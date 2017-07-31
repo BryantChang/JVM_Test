@@ -43,7 +43,6 @@ import java.util.concurrent.FutureTask;
 
 //集成Thread类,继承Thread类,复写run方法
 
-
 class MyThread implements Runnable {
     private int ticket = 10;
     @Override
