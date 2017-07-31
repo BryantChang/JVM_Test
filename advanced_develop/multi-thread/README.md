@@ -968,6 +968,10 @@ B=bbb
 A=bbb
 ```
 
+![IMG11](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/advanced_develop/multi-thread/imgs/img11.png)
+
+* 如果想要明确的标记出每一个线程的具体的对象信息，则需要使用ThreadLocal，其多保存了一个CurrentThread
+
 
 ```java
 /**
