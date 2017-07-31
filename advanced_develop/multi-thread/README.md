@@ -504,6 +504,380 @@ public class TestDemo {
 
 * 同步虽然可以保证线程安全操作，但执行速度会很慢
 
+### 死锁
+
+* 同步的本质：一个线程等待另一个线程执行完毕后，自己才能执行，如果多个线程间彼此都在等待着（同步），就会造成死锁
+
+* 死锁举例
+
+```java
+class Pen {
+    public synchronized void get(Note note) {
+        System.out.println("get note");
+        note.result();
+    }
+    public synchronized void result() {
+        System.out.println("get note result");
+    }
+}
+
+class Note {
+    public synchronized void get(Pen pen) {
+        System.out.println("get pen");
+        pen.result();
+    }
+    public synchronized void result() {
+        System.out.println("get pen result");
+    }
+}
+public class DeadLock implements Runnable{
+    private static Note note = new Note();
+    private static Pen pen = new Pen();
+
+    public DeadLock() {
+        new Thread(this).start();
+        pen.get(note);
+    }
+    public static void main(String[] args) {
+        new DeadLock();
+    }
+
+    @Override
+    public void run() {
+        note.get(pen);
+    }
+}
+
+```
+
+
+* 数据要想完整操作就要使用同步，但同步太多会产生死锁。
+
+### 生产者与消费者模型
+
+#### 基础模型
+
+* 生产者与消费者问题是经典的供求案例provider,consumer
+* 生产者负责生产数据，生产者每当生产一个数据之后，消费者会取走
+* 生产数据
+    - title=titleA note=noteA
+    - title=titleB note=noteB
+
+![IMG10](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/advanced_develop/multi-thread/imgs/img10.png)
+
+```java
+class Data {
+    private String title;
+    private String note;
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+}
+
+
+class DataProvider implements Runnable {
+    private Data data;
+
+    public DataProvider(Data data) {
+        this.data = data;
+    }
+
+    @Override
+    public void run() {
+        for (int x = 0; x < 50; x++) {
+            if(x % 2 == 0) {
+                this.data.setTitle("titleA");
+                try {
+                    Thread.sleep(150);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                this.data.setNote("noteA");
+            }else {
+                this.data.setTitle("titleB");
+                try {
+                    Thread.sleep(150);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                this.data.setNote("noteB");
+            }
+        }
+    }
+}
+
+class DataConsumer implements Runnable {
+    private Data data;
+
+    public DataConsumer(Data data) {
+        this.data = data;
+    }
+
+
+    @Override
+    public void run() {
+        for (int x = 0; x < 50; x++) {
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println(this.data.getTitle() + "=" + this.data.getNote());
+        }
+    }
+}
+public class DeadLock{
+    public static void main(String[] args) {
+        Data data = new Data();
+        new Thread(new DataProvider(data)).start();
+        new Thread(new DataConsumer(data)).start();
+    }
+}
+
+```
+
+* 数据不完整
+* 数据重复设置或取出
+
+#### 解决同步问题
+
+* 使用synchronized关键字实现数据同步
+
+#### 解决数据重复操作问题
+
+* 等待与唤醒机制
+* Object类中提供的方法
+    - wait() -- 死等
+    - notify() -- 唤醒第一个等待线程
+    - notifyAll() -- 唤醒全部等待线程，哪个优先级高，哪个有可能先执行
+
+```java
+public final void wait() throws InterruptedException {
+    wait(0);
+}
+```
+
+```java
+public final native void notify();
+```
+
+```java
+public final native void notifyAll();
+```
+
+#### 通过等待与唤醒机制解决数据重复问题
+
+
+```java
+class Data {
+    private String title;
+    private String note;
+    private boolean flag = false; //false允许生产,但不允许取走 true允许取走,不允许生产
+    public synchronized void set(String title, String note) {
+        if(this.flag == true) { //现在不允许生产
+            try {
+                super.wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        this.title = title;
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        this.note = note;
+        this.flag = true;
+        super.notify();
+    }
+
+    public synchronized void get() {
+        if(flag == false) {
+            try {
+                super.wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            Thread.sleep(50);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println(this.title + "=" + this.note);
+        this.flag = false;//已经生产过了,不允许重复生产
+        super.notify();
+    }
+
+}
+
+class DataProvider implements Runnable {
+    private Data data;
+    public DataProvider(Data data) {
+        this.data = data;
+    }
+    @Override
+    public void run() {
+        for (int x = 0; x < 50; x++) {
+            if(x % 2 == 0) {
+                this.data.set("titleA", "noteA");
+
+            }else {
+                this.data.set("titleB", "noteB");
+            }
+        }
+    }
+}
+class DataConsumer implements Runnable {
+    private Data data;
+    public DataConsumer(Data data) {
+        this.data = data;
+    }
+    @Override
+    public void run() {
+        for (int x = 0; x < 150; x++) {
+            data.get();
+        }
+    }
+}
+public class DeadLock{
+    public static void main(String[] args) {
+        Data data = new Data();
+        new Thread(new DataProvider(data)).start();
+        new Thread(new DataConsumer(data)).start();
+    }
+}
+```
+
+* wait()与sleep()的区别
+    - sleep()是Thread定义的方法，到了一定时间后，休眠的线程可以自动唤醒
+    - wait()是Object的方法，必须调用notify和notifyAll的方法才能够唤醒
+
+
+### 线程池
+
+#### 线程池定义
+
+* 所谓的线程池指的是多个线程封装在一起进行操作
+* 针对于某一项任务使用一组线程捆绑在一起执行
+* 存在以下的几种情况
+    - 任务很大，有多少人就要多少人，一直到完成（无限长度）
+    - 只能招聘10个人（限定长度）
+    - 只能一个人做（单线程）
+* concurrent包的两个核心接口
+    - ExecutorService(普通的线程池)
+    - ScheduledExecutorService(调度线程池)
+    - 创建线程池一般可以使用Executors类完成，有如下几个方法
+        + public static ExecutorService newCachedThreadPool()创建无大小限制的线程池
+        + public static ExecutorService newFixedThreadPool(int nThreads)创建固定大小的线程池
+        + public static ExecutorService newSingleThreadExecutor()单线程池
+        + public static ScheduledExecutorService newScheduledThreadPool(int corePoolSize)调度定时调度池
+
+#### 线程池实现
+
+* 无限大小的线程池
+
+```java
+public class TestDemo {
+    public static void main(String[] args) {
+        //创建了一个线程池的模型
+        ExecutorService executor = Executors.newCachedThreadPool();
+        for (int x = 0; x < 10; x++) {
+            int index = x;
+            executor.submit(new Runnable() {
+                @Override
+                public void run() {
+                    System.out.println(Thread.currentThread().getName() + "x=" + index);
+                }
+            });
+
+        }
+        executor.shutdown();
+    }
+}
+```
+
+
+* 创建单线程池
+
+```java
+public class TestDemo {
+    public static void main(String[] args) {
+        //创建了一个线程池的模型
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        for (int x = 0; x < 10; x++) {
+            int index = x;
+            executor.submit(new Runnable() {
+                @Override
+                public void run() {
+                    System.out.println(Thread.currentThread().getName() + "x=" + index);
+                }
+            });
+
+        }
+        executor.shutdown();
+    }
+}
+```
+
+
+* 创建固定长度线程池
+
+```java
+public class TestDemo {
+    public static void main(String[] args) {
+        //创建了一个线程池的模型
+        ExecutorService executor = Executors.newFixedThreadPool(5);
+        for (int x = 0; x < 10; x++) {
+            int index = x;
+            executor.submit(new Runnable() {
+                @Override
+                public void run() {
+                    System.out.println(Thread.currentThread().getName() + "x=" + index);
+                }
+            });
+
+        }
+        executor.shutdown();
+    }
+}
+```
+
+
+* 定时调度池
+
+```java
+public class TestDemo {
+    public static void main(String[] args) {
+        //创建了一个线程池的模型
+
+        ScheduledExecutorService threadPool = Executors.newScheduledThreadPool(3);
+        for (int x = 0; x < 10; x++) {
+            final int index = x;
+            threadPool.scheduleAtFixedRate(new Runnable() {
+                @Override
+                public void run() {
+                    System.out.println(Thread.currentThread().getName() + ",x=" + index);
+                }
+            },3, 2, TimeUnit.SECONDS);//3秒后开始执行，每两秒执行一次
+        }
+    }
+}
+```
 
 
 

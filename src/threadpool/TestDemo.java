@@ -19,6 +19,8 @@ import java.util.concurrent.*;
  */
 public class TestDemo {
     public static void main(String[] args) {
+        //创建了一个线程池的模型
+
         ScheduledExecutorService threadPool = Executors.newScheduledThreadPool(3);
         for (int x = 0; x < 10; x++) {
             final int index = x;
