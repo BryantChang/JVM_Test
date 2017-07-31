@@ -880,10 +880,155 @@ public class TestDemo {
 ```
 
 
+### ThreadLocal类
+
+* 可以减少一些重要的引用传递
 
 
+```java
+class Message1 {
+    private String note;
+    public void setNote(String note) {
+        this.note = note;
+    }
+    public String getNote() {
+        return note;
+    }
+}
+
+class MessageConsumer1 {
+    public void print(Message1 msg) { //明确接收Message类对象
+        System.out.println(Thread.currentThread().getName() + "=" + msg.getNote());
+    }
+}
+public class Test {
+    public static void main(String[] args) {
+        new Thread(() -> {
+            Message1 msg = new Message1();
+            msg.setNote("aaa");
+            new MessageConsumer1().print(msg);
+        }, "A").start();
+
+        new Thread(() -> {
+            Message1 msg = new Message1();
+            msg.setNote("bbb");
+            new MessageConsumer1().print(msg);
+        }, "B").start();
+    }
+}
+
+```
+
+* 以上代码中明确使用了引用传递将Message1对象传递给MessageConsumer1类的print()方法
+* 如何不传递类对象来实现
+* 使用其他类实现参数传递
+
+```java
+class Message1 {
+    private String note;
+    public void setNote(String note) {
+        this.note = note;
+    }
+    public String getNote() {
+        return note;
+    }
+}
+
+class MessageConsumer1 {
+    public void print() { //明确接收Message类对象
+        System.out.println(Thread.currentThread().getName() + "=" + MyUtil1.message.getNote());
+    }
+}
+
+class MyUtil1 {
+    public static Message1 message;
+}
+public class Test {
+    public static void main(String[] args) {
+        new Thread(() -> {
+            Message1 msg = new Message1();
+            msg.setNote("aaa");
+            MyUtil1.message = msg;
+            new MessageConsumer1().print();
+        }, "A").start();
+
+        new Thread(() -> {
+            Message1 msg = new Message1();
+            msg.setNote("bbb");
+            MyUtil1.message = msg;
+            new MessageConsumer1().print();
+        }, "B").start();
+    }
+}
+```
+
+```
+执行结果：
+B=bbb
+A=bbb
+```
 
 
+```java
+/**
+ * Created by bryantchang on 2017/7/9.
+ * ThreadLocal类
+ * 可以减少引用传递
+ * 明确的标记每一个线程的具体的对象信息,就需要使用ThreadLocal,多保存了一个currentThread
+ * 重要方法:
+ * get取得一个数据
+ * set保存一个数据
+ * remove删除数据
+ */
+class Message {
+    private String note;
+    public String getNote() {
+        return note;
+    }
+    public void setNote(String note) {
+        this.note = note;
+    }
+}
+
+class MyUtil{
+    public static ThreadLocal<Message> local = new ThreadLocal<>();
+    public static void set(Message msg) {
+        local.set(msg);
+    }
+    public static Message get() {
+        return local.get();
+    }
+}
+
+class MessageConsumer {
+    public void print() {//consumer必须明确接受Message类对象
+        System.out.println(Thread.currentThread().getName() + MyUtil.get().getNote());
+    }
+}
+public class TestDemo {
+    public static void main(String[] args){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Message msg = new Message();
+                msg.setNote("hello worlda");
+                MyUtil.set(msg);
+                new MessageConsumer().print();
+            }
+        }, "A").start();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Message msg = new Message();
+                msg.setNote("hello worldb");
+                MyUtil.set(msg);
+                new MessageConsumer().print();
+            }
+        }, "B").start();
+    }
+}
+```
 
 
 
