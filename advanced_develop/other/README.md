@@ -35,11 +35,23 @@ finally异常处理
 finalize()Object类的方法,被释放前所做的事情
 ```
 
+### 对象克隆
 
+* 克隆指的是对象的复制
+* Object类支持对象克隆方法clone()
 
+```java
+protected Object clone() throws CloneNotSupportedException
+```
 
+* 不是所有类的对象都支持克隆，需要实现Cloneable接口，该接口没有任何抽象方法，只是一个标识接口，表示一种能力
 
+### 观察者设计模式
 
+* 观察者模式的两个程序结构
+    -   观察者：public interface Observer
+        +   void update(Observable o, Object arg)
+    -   被观察者：public class Observable extends Object
 
 
 
