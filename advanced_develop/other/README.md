@@ -96,8 +96,19 @@ public class TestDemo {
 
 ```
 
+### 字节流与字符流
 
-
+* File类不支持文件内容处理
+* 流：
+    - 输入流
+    - 输出流
+* 字节流:
+    - InputStream OutputStream
+* 字符流（经过处理的字节流，适用于处理中文）
+    - Reader Writer
+* 基本流程
+    - 根据文件路径，创建File类对象
+    - 
 
 
 
