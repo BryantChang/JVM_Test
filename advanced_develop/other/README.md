@@ -117,8 +117,7 @@ public class TestDemo {
 * 类定义
 
 ```java
-public abstract class OutputStream extends Object implements Closeable, Flushable
-{}
+public abstract class OutputStream extends Object implements Closeable, Flushable{}
 ```
 
 * OutputStream 实现了Closeable, Flushable两个接口，有两个方法
@@ -151,6 +150,94 @@ public class TestDemo {
     }
 }
 ```
+
+* OutputStream中最重要的方法为：
+    - public void write(byte[] b, int off, int len) throws IOException
+
+## AutoCloseble
+
+* 自动的关闭处理
+
+## InputStream（字节输入流）
+
+![IMG2](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/advanced_develop/other/imgs/img2.png)
+
+```java
+public abstract class InputStream extends Object implements Closeable{}
+```
+
+* 方法：
+    - public int read(byte[] b) throws IOException  -- 读取数据到字节数组之中，返回数据的读取个数，如果此时开辟的字节数组大小大于数据大小，则返回读取个数，如果读取的数据大于数组的内容，则返回数组长度，如果没有数据，返回-1；
+    - public int read(byte[] b, int off, int len) throws IOException -- 读取部分数据到字节数组之中，返回数据的读取个数，每次读取数组的部分内容，如果满了，则返回len，如果没满，则返回数组长度，没有数据返回-1；
+    - public abstract int read() throws IOException -- 读取单个字节
+
+* InputStream举例
+
+```java
+public class TestDemo {
+    public static void main(String[] args) throws Exception {
+        //输出字节流
+        File file = new File("/Users/bryantchang/Desktop/study/codes/for_interview/JVM_test/files/hello.txt");
+        InputStream input = new FileInputStream(file);
+        if(file.exists()) {
+            byte data[] = new byte[1024];
+            int len = input.read(data);
+            System.out.println(new String(data, 0, len));
+        }
+    }
+}
+```
+
+## 字符输入流Writer
+
+* 字符适合处理中文数据
+
+```java
+public abstract class Writer extends Object implements Appendable, Closeable, Flushable{}
+```
+
+* Writer类中也提供write()方法，而且都是接收char型的，但有一个方法可以直接接收String
+    - public void write(String str) throws IOException
+
+![IMG3](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/advanced_develop/other/imgs/img3.png)
+
+
+### Writer 举例
+
+```java
+public class TestDemo {
+    public static void main(String[] args) throws Exception {
+        //输出字节流
+        File file = new File("/Users/bryantchang/Desktop/study/codes/for_interview/JVM_test/files/hello.txt");
+        if(!file.getParentFile().exists()) {//保证父目录存在
+            file.getParentFile().mkdirs();//创建目录
+        }
+        String msg = "世界和平";
+        Writer out = new FileWriter(file);
+        out.write(msg);
+        out.close();
+    }
+}
+
+```
+
+## Reader -- 字符输入流
+
+* 抽象类，FileReader
+
+![IMG4](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/advanced_develop/other/imgs/img4.png)
+
+```java
+public abstract class Reader extends Object implements Readable, Closeable{}
+```
+
+
+
+
+
+
+
+
 
 
 
