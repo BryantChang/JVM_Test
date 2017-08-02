@@ -67,18 +67,18 @@ public class TestDemo {
     public static void main(String[] args) throws Exception {
         //输出字节流
         File file = new File("/Users/bryantchang/Desktop/study/codes/for_interview/JVM_test/files/hello.txt");
-//        if(!file.getParentFile().exists()) {//保证父目录存在
-//            file.getParentFile().mkdirs();//创建目录
-//        }
-//        OutputStream output = new FileOutputStream(file, true);
-//        String msg = "hello world";
-//        output.write(msg.getBytes());
-//        output.close();
-        InputStream input = new FileInputStream(file);
-        if(file.exists()) {
-            byte data[] = new byte[1024];
-            int len = input.read(data);
-            System.out.println(new String(data, 0, len));
+        if(!file.getParentFile().exists()) {//保证父目录存在
+            file.getParentFile().mkdirs();//创建目录
         }
+        OutputStream output = new FileOutputStream(file, true);
+        String msg = "hello world";
+        output.write(msg.getBytes());
+        output.close();
+//        InputStream input = new FileInputStream(file);
+//        if(file.exists()) {
+//            byte data[] = new byte[1024];
+//            int len = input.read(data);
+//            System.out.println(new String(data, 0, len));
+//        }
     }
 }

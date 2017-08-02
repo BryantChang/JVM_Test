@@ -198,7 +198,7 @@ private void init(ThreadGroup g, Runnable target, String name,
 ![IMG3](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/advanced_develop/multi-thread/imgs/img3.png)
 
 
-* 在多线程的处理上使用了代理设计模式，在实际卡法中，使用Runnable有一个特点，使用Runnable实现的多线程的程序类，可以更好地描述数据共享的概念（并不是Thread不能）
+* 在多线程的处理上使用了代理设计模式，在实际开发中，使用Runnable有一个特点，使用Runnable实现的多线程的程序类，可以更好地描述数据共享的概念（并不是Thread不能）
 
 ### 使用Thread实现数据操作---产生若干个线程进行同一数据处理操作
 

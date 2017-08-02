@@ -102,13 +102,59 @@ public class TestDemo {
 * 流：
     - 输入流
     - 输出流
-* 字节流:
+* 字节流--原生操作:
     - InputStream OutputStream
 * 字符流（经过处理的字节流，适用于处理中文）
     - Reader Writer
 * 基本流程
     - 根据文件路径，创建File类对象
-    - 
+    - 根据字节流或字符流的子类实例化父类对象
+    - 进行数据的读取或写入操作
+    - 关闭流(close())
+
+### OutputStream--字节输出流
+
+* 类定义
+
+```java
+public abstract class OutputStream extends Object implements Closeable, Flushable
+{}
+```
+
+* OutputStream 实现了Closeable, Flushable两个接口，有两个方法
+    - public void close() throws IOException
+    - public void flush() throws IOException
+* OutputStream类中的其他方法
+    - public void write(byte[] b) throws IOException  -- 将给定的字节数组内容全部输出
+    - public void write(byte[] b, int off, int len) throws IOException -- 将部分数组内容输出
+    - public abstract void write(int b) throws IOException -- 输出单个字节
+* 子类的构造方法，若要进行文件操作，可以使用FileOutputStream类来处理
+    - public FileOutputStream(File file) throws FileNotFoundException
+    - public FileOutputStream(File file, boolean append) throws FileNotFoundException
+
+![IMG1](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/advanced_develop/other/imgs/img1.png)
+
+### FileOutputStream 使用案例
+
+```java
+public class TestDemo {
+    public static void main(String[] args) throws Exception {
+        //输出字节流
+        File file = new File("/Users/bryantchang/Desktop/study/codes/for_interview/JVM_test/files/hello.txt");
+        if(!file.getParentFile().exists()) {//保证父目录存在
+            file.getParentFile().mkdirs();//创建目录
+        }
+        OutputStream output = new FileOutputStream(file, true);
+        String msg = "hello world";
+        output.write(msg.getBytes());
+        output.close();
+    }
+}
+```
+
+
+
+
 
 
 
