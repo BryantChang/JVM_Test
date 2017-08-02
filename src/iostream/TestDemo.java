@@ -64,10 +64,37 @@ import java.util.Date;
  *
  * 从继承结构上来讲,字符流处理的所有数据都是经过转换的
  */
+interface IFruit{
+    public void eat();
+}
+
+class Factory {
+    public static IFruit getInstance(String className) {
+        if("apple".equals(className)) {
+            return new Apple();
+        }
+        if("orange".equals(className)) {
+            return new Orange();
+        }
+        return null;
+    }
+}
+
+class Apple implements IFruit {
+    public void eat() {
+        System.out.println("eat apple");
+    }
+}
+
+class Orange implements IFruit {
+    public void eat() {
+        System.out.println("eat orange");
+    }
+}
+
 public class TestDemo {
-    public static void main(String[] args) throws Exception {
-        Class<?> cls = Class.forName("java.util.Date");
-        Object obj = cls.newInstance();
-        System.out.println(obj);
+    public static void main(String[] args) {
+        IFruit fruit = Factory.getInstance("apple");
+        fruit.eat();
     }
 }

@@ -329,6 +329,70 @@ public class TestDemo {
 public T newInstance() throws InstantiationException,IllegalAccessException
 ```
 
+```java
+public class TestDemo {
+    public static void main(String[] args) throws Exception {
+        Class<?> cls = Class.forName("java.util.Date");
+        Object obj = cls.newInstance();
+        System.out.println(obj);
+    }
+}
+```
+
+## 反射与工厂方法
+
+* 传统工厂类设计
+
+```java
+interface IFruit{
+    public void eat();
+}
+
+class Factory {
+    public static IFruit getInstance(String className) {
+        if("apple".equals(className)) {
+            return new Apple();
+        }
+        if("orange".equals(className)) {
+            return new Orange();
+        }
+        return null;
+    }
+}
+
+class Apple implements IFruit {
+    public void eat() {
+        System.out.println("eat apple");
+    }
+}
+
+class Orange implements IFruit {
+    public void eat() {
+        System.out.println("eat orange");
+    }
+}
+
+public class TestDemo {
+    public static void main(String[] args) {
+        IFruit fruit = Factory.getInstance("apple");
+        fruit.eat();
+    }
+}
+```
+
+* 传统工厂类的最大弊端---new
+
+![IMG8](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/advanced_develop/other/imgs/img8.png)
+
+
+
+
+
+
+
+
+
+
 
 
 
