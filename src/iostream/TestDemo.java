@@ -1,6 +1,7 @@
 package iostream;
 
 import java.io.*;
+import java.util.Date;
 
 /**
  * Created by bryantchang on 2017/7/9.
@@ -65,24 +66,8 @@ import java.io.*;
  */
 public class TestDemo {
     public static void main(String[] args) throws Exception {
-        //输出字节流
-        File file = new File("/Users/bryantchang/Desktop/study/codes/for_interview/JVM_test/files/hello.txt");
-        if(!file.getParentFile().exists()) {//保证父目录存在
-            file.getParentFile().mkdirs();//创建目录
-        }
-        String msg = "世界和平";
-        Writer out = new FileWriter(file);
-        out.write(msg);
-        out.close();
-//        OutputStream output = new FileOutputStream(file, true);
-//        String msg = "hello world";
-//        output.write(msg.getBytes());
-//        output.close();
-//        InputStream input = new FileInputStream(file);
-//        if(file.exists()) {
-//            byte data[] = new byte[1024];
-//            int len = input.read(data);
-//            System.out.println(new String(data, 0, len));
-//        }
+        Class<?> cls = Class.forName("java.util.Date");
+        Object obj = cls.newInstance();
+        System.out.println(obj);
     }
 }

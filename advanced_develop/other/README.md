@@ -268,11 +268,66 @@ public class InputStreamReader extends Reader {
 ![IMG7](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/advanced_develop/other/imgs/img7.png)
 
 
+## 反射机制
+
+* "正"的操作，先导入一个包才能产生实例化操作
+* "反"指的是通过对象找到出处，核心处理时Object中取得Class类对象的方法
+    - public final Class<?> getClass()
+    - 类，构造，普通，成员等
+
+```java
+public class TestDemo {
+    public static void main(String[] args) throws Exception {
+        Date date = new Date();//正常来讲,必须通过类才能产生实例化对象
+        System.out.println(date.getClass());//class java.util.Date
+    }
+}
+```
 
 
+## Class类的三种实例化方法
+
+* Class类是描述整个class的类
+* Class类对象的产生模式
+* 实例化对象可以通过getClass()方法取得Class类对象泛型必须写问号
+
+```java
+public class TestDemo {
+    public static void main(String[] args) throws Exception {
+        Class<?> cls = new Date().getClass();
+        System.out.println(cls.getName());
+    }
+}
+```
+
+* 类.class,直接根据某个具体的类来取得Class类的实例化对象
+
+```java
+public class TestDemo {
+    public static void main(String[] args) throws Exception {
+        Class<?> cls = Date.class;
+        System.out.println(cls.getName());
+    }
+}
+```
 
 
+* 使用Class类提供的方法forName()
 
+```java
+public class TestDemo {
+    public static void main(String[] args) throws Exception {
+        Class<?> cls = Class.forName("java.util.Date");
+        System.out.println(cls.getName());
+    }
+}
+```
+
+* 取得Class类对象可以利用反射进行实例化(newInstance)
+
+```java
+public T newInstance() throws InstantiationException,IllegalAccessException
+```
 
 
 
