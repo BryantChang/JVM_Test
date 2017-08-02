@@ -231,8 +231,11 @@ public class TestDemo {
 public abstract class Reader extends Object implements Readable, Closeable{}
 ```
 
+* 字符流在读取或写入时更适合处理中文
 
+## 字节流与字符流的关系
 
+![IMG5](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/advanced_develop/other/imgs/img5.png)
 
 
 
