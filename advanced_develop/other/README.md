@@ -237,15 +237,31 @@ public abstract class Reader extends Object implements Readable, Closeable{}
 
 ![IMG5](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/advanced_develop/other/imgs/img5.png)
 
+## 转换流
+
+* 字符流与字节流也可以进行相互的转换处理
+    - OutputStreamWriter--将字节输出流变为字符输出流
+    - InputStreamReader--将字节输入流变为字符输入流
+* 两个类的继承关系
+
+### OutputStreamWriter
+
+```java
+public class OutputStreamWriter extends Writer{
+    public OutputStreamWriter(OutputStream out, Charset cs){}
+}
+```
+
+### InputStreamReader
+
+```java
+public class InputStreamReader extends Reader {
+    InputStreamReader(InputStream in){}
+}
+```
 
 
-
-
-
-
-
-
-
+![IMG6](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/advanced_develop/other/imgs/img6.png)
 
 
 
