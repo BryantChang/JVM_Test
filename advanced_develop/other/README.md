@@ -384,7 +384,7 @@ public class TestDemo {
 
 ![IMG8](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/advanced_develop/other/imgs/img8.png)
 
-
+* 解决方法：使用反射来实现工厂类，使用newInstance和forName
 
 
 

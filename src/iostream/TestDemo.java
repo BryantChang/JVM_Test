@@ -69,14 +69,8 @@ interface IFruit{
 }
 
 class Factory {
-    public static IFruit getInstance(String className) {
-        if("apple".equals(className)) {
-            return new Apple();
-        }
-        if("orange".equals(className)) {
-            return new Orange();
-        }
-        return null;
+    public static IFruit getInstance(String className) throws ClassNotFoundException {
+        Object obj = Class.forName(className).newInstance();
     }
 }
 
