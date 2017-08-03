@@ -386,7 +386,46 @@ public class TestDemo {
 
 * 解决方法：使用反射来实现工厂类，使用newInstance和forName
 
+```java
+interface IFruit{
+    public void eat();
+}
 
+class Factory {
+    public static IFruit getInstance(String className) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+        IFruit obj = (IFruit)Class.forName(className).newInstance();
+        return obj;
+    }
+}
+
+class Apple implements IFruit {
+    public void eat() {
+        System.out.println("eat apple");
+    }
+}
+
+class Orange implements IFruit {
+    public void eat() {
+        System.out.println("eat orange");
+    }
+}
+
+public class TestDemo {
+    public static void main(String[] args) {
+        IFruit fruit = null;
+        try {
+            fruit = Factory.getInstance(Orange.class.getName());
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        fruit.eat();
+    }
+}
+```
 
 
 

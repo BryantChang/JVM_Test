@@ -466,6 +466,8 @@ public class TestDemo {
 }
 ```
 
+![IMG12](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/advanced_develop/multi-thread/imgs/img12.png)
+
 * 这种实现方式实在方法里拦截的，也就是说进入到方法中的线程还会有很多个
 
 

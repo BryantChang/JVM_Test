@@ -69,8 +69,9 @@ interface IFruit{
 }
 
 class Factory {
-    public static IFruit getInstance(String className) throws ClassNotFoundException {
-        Object obj = Class.forName(className).newInstance();
+    public static IFruit getInstance(String className) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+        IFruit obj = (IFruit)Class.forName(className).newInstance();
+        return obj;
     }
 }
 
@@ -88,7 +89,16 @@ class Orange implements IFruit {
 
 public class TestDemo {
     public static void main(String[] args) {
-        IFruit fruit = Factory.getInstance("apple");
+        IFruit fruit = null;
+        try {
+            fruit = Factory.getInstance(Orange.class.getName());
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
         fruit.eat();
     }
 }
