@@ -611,14 +611,14 @@ public interface Map<K,V>{}
 public class ConcurrentHashMap<K,V> extends AbstractMap<K,V> implements ConcurrentMap<K,V>, Serializable{}
 ```
 
-![IMG12](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/advanced_develop/other/imgs/img12.png)
+![IMG13](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/advanced_develop/other/imgs/img13.png)
 
 * ConcurrentHashMap工作原理
     - 数据分桶--将大量数据平均分在不同的数据区域中，在进行数据查找时可以避免全部的数据扫描
     - 每一个数据中要有一个分桶的标记(Hashcode)16个
     - 16把写锁，每次写只锁当前数据块，其它不上锁
     
-![IMG13](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/advanced_develop/other/imgs/img13.png)
+![IMG14](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/advanced_develop/other/imgs/img14.png)
 
 
 
