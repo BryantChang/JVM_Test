@@ -19,13 +19,97 @@ package producerandconsumer;
  */
 
 
+//class Data {
+//    private String title;
+//    private String note;
+//
+//    public String getTitle() {
+//        return title;
+//    }
+//
+//    public void setTitle(String title) {
+//        this.title = title;
+//    }
+//
+//    public String getNote() {
+//        return note;
+//    }
+//
+//    public void setNote(String note) {
+//        this.note = note;
+//    }
+//}
+//
+//
+//class DataProvider implements Runnable {
+//    private Data data;
+//
+//    public DataProvider(Data data) {
+//        this.data = data;
+//    }
+//
+//    @Override
+//    public void run() {
+//        for (int x = 0; x < 50; x++) {
+//            if(x % 2 == 0) {
+//                this.data.setTitle("titleA");
+//                try {
+//                    Thread.sleep(150);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//                this.data.setNote("noteA");
+//            }else {
+//                this.data.setTitle("titleB");
+//                try {
+//                    Thread.sleep(150);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//                this.data.setNote("noteB");
+//            }
+//        }
+//    }
+//}
+//
+//class DataConsumer implements Runnable {
+//    private Data data;
+//
+//    public DataConsumer(Data data) {
+//        this.data = data;
+//    }
+//
+//
+//    @Override
+//    public void run() {
+//        for (int x = 0; x < 50; x++) {
+//            try {
+//                Thread.sleep(200);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//            System.out.println(this.data.getTitle() + "=" + this.data.getNote());
+//        }
+//    }
+//}
+//public class TestDemo{
+//    public static void main(String[] args) {
+//        Data data = new Data();
+//        new Thread(new DataProvider(data)).start();
+//        new Thread(new DataConsumer(data)).start();
+//    }
+//}
+
+
 class Data {
-    private boolean flag = false;//允许生产,不允许消费true
+    private static final boolean PRODUCE = false;
+    private static final boolean CONSUME = true;
+    private boolean state = PRODUCE;//允许生产,不允许消费true
     private String title;
     private String note;
 
     public synchronized void set(String title, String note) {
-        if(this.flag == true) { //现在不允许取走
+        if(this.state != PRODUCE) { //现在不允许取走
             try {
                 super.wait();
             } catch (InterruptedException e) {
@@ -39,12 +123,12 @@ class Data {
             e.printStackTrace();
         }
         this.note = note;
-        this.flag = true;
+        this.state = CONSUME;
         super.notify();
     }
 
     public synchronized void get() {
-        if(flag == false) {
+        if(this.state == PRODUCE) {
             try {
                 super.wait();
             } catch (InterruptedException e) {
@@ -57,7 +141,7 @@ class Data {
             e.printStackTrace();
         }
         System.out.println(this.title + "=" + this.note);
-        this.flag = false;//已经生产过了,不允许重复生产
+        this.state = PRODUCE;//取完了,开始生产
         super.notify();
     }
 }

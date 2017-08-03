@@ -685,11 +685,14 @@ public final native void notifyAll();
 
 ```java
 class Data {
+    private static final boolean PRODUCE = false;
+    private static final boolean CONSUME = true;
+    private boolean state = PRODUCE;//允许生产,不允许消费true
     private String title;
     private String note;
-    private boolean flag = false; //false允许生产,但不允许取走 true允许取走,不允许生产
+
     public synchronized void set(String title, String note) {
-        if(this.flag == true) { //现在不允许生产
+        if(this.state != PRODUCE) { //现在不允许取走
             try {
                 super.wait();
             } catch (InterruptedException e) {
@@ -703,12 +706,12 @@ class Data {
             e.printStackTrace();
         }
         this.note = note;
-        this.flag = true;
+        this.state = CONSUME;
         super.notify();
     }
 
     public synchronized void get() {
-        if(flag == false) {
+        if(this.state == PRODUCE) {
             try {
                 super.wait();
             } catch (InterruptedException e) {
@@ -721,45 +724,49 @@ class Data {
             e.printStackTrace();
         }
         System.out.println(this.title + "=" + this.note);
-        this.flag = false;//已经生产过了,不允许重复生产
+        this.state = PRODUCE;//取完了,开始生产
         super.notify();
     }
-
 }
 
-class DataProvider implements Runnable {
+class DataProducer implements Runnable {
     private Data data;
-    public DataProvider(Data data) {
+
+    public DataProducer(Data data) {
         this.data = data;
     }
+
     @Override
     public void run() {
-        for (int x = 0; x < 50; x++) {
-            if(x % 2 == 0) {
-                this.data.set("titleA", "noteA");
-
+        for (int i = 0; i < 50; i++) {
+            if(i % 2 == 0) {
+                this.data.set("TitleA", "NoteA");
             }else {
-                this.data.set("titleB", "noteB");
+                this.data.set("TitleB", "NoteB");
             }
         }
     }
 }
+
 class DataConsumer implements Runnable {
-    private Data data;
+    Data data;
+
     public DataConsumer(Data data) {
         this.data = data;
     }
+
     @Override
     public void run() {
-        for (int x = 0; x < 150; x++) {
-            data.get();
+        for (int i = 0; i < 50; i++) {
+            this.data.get();
         }
     }
 }
-public class DeadLock{
+
+public class TestDemo {
     public static void main(String[] args) {
         Data data = new Data();
-        new Thread(new DataProvider(data)).start();
+        new Thread(new DataProducer(data)).start();
         new Thread(new DataConsumer(data)).start();
     }
 }
