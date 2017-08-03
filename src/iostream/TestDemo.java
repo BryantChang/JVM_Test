@@ -1,7 +1,9 @@
 package iostream;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Hashtable;
 
 /**
  * Created by bryantchang on 2017/7/9.
@@ -68,37 +70,49 @@ interface IFruit{
     public void eat();
 }
 
+interface IMessage{
+    public void print();
+}
+
+
+class MessageImpl implements IMessage {
+    @Override
+    public void print() {
+        System.out.println("hello");
+    }
+}
+
 class Factory {
-    public static IFruit getInstance(String className) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
-        IFruit obj = (IFruit)Class.forName(className).newInstance();
+    public static<T> T getInstance(String className) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+        T obj = null;
+        try {
+            obj = (T)Class.forName(className).newInstance();
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
         return obj;
     }
 }
 
 class Apple implements IFruit {
     public void eat() {
+//        ArrayList
+//        Hashtable
         System.out.println("eat apple");
     }
 }
 
-class Orange implements IFruit {
-    public void eat() {
-        System.out.println("eat orange");
-    }
-}
 
 public class TestDemo {
     public static void main(String[] args) {
-        IFruit fruit = null;
+
         try {
-            fruit = Factory.getInstance(Orange.class.getName());
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            IFruit fruit = Factory.getInstance(Apple.class.getName());
+            fruit.eat();
+            IMessage message = Factory.getInstance(MessageImpl.class.getName());
+            message.print();
+        } catch (Exception e) {
+           e.printStackTrace();
         }
-        fruit.eat();
     }
 }

@@ -393,8 +393,13 @@ interface IFruit{
 
 class Factory {
     public static IFruit getInstance(String className) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
-        IFruit obj = (IFruit)Class.forName(className).newInstance();
-        return obj;
+        IFruit fruit = null;
+        try {
+            fruit = (IFruit)Class.forName(className).newInstance();
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
+        return fruit;
     }
 }
 
@@ -415,18 +420,205 @@ public class TestDemo {
         IFruit fruit = null;
         try {
             fruit = Factory.getInstance(Orange.class.getName());
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+           e.printStackTrace();
         }
-        fruit.eat();
     }
 }
 ```
 
+* 缺陷：如果现在又10w个接口，那么就需要有个10w个接口，因此使用泛型来解决
+* 解决：
+
+```java
+interface IFruit{
+    public void eat();
+}
+
+interface IMessage{
+    public void print();
+}
+
+
+class MessageImpl implements IMessage {
+    @Override
+    public void print() {
+        System.out.println("hello");
+    }
+}
+
+class Factory {
+    public static<T> T getInstance(String className) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+        T obj = null;
+        try {
+            obj = (T)Class.forName(className).newInstance();
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
+        return obj;
+    }
+}
+
+class Apple implements IFruit {
+    public void eat() {
+        System.out.println("eat apple");
+    }
+}
+
+
+public class TestDemo {
+    public static void main(String[] args) {
+        try {
+            IFruit fruit = Factory.getInstance(Apple.class.getName());
+            fruit.eat();
+            IMessage message = Factory.getInstance(MessageImpl.class.getName());
+            message.print();
+        } catch (Exception e) {
+           e.printStackTrace();
+        }
+    }
+}
+```
+
+
+## Collection集合接口（为了查找）
+
+* 在Java的类集中，有两个核心的接口
+    - Collection:每一次进行数据操作时只能对单个对象进行处理，单个集合保存的最大父接口。
+    - Map
+
+* Collection接口定义如下
+
+```java
+public interface Collection<E> extends Iterable<E>{
+    //JDK1.5开始，避免了ClassCastException
+    Iterator<T> iterator(); //1.5之前是直接由Collection提供的
+}
+
+```
+
+* 该类中的常用方法如下：
+    - public boolean add(E e)--向集合中添加数据
+    - public boolean addAll(Collection<? extends E> c)--向集合中添加一组数据
+    - public void clear()---清空集合
+    - public boolean contains(Object o)--查询集合中是否包含某个元素，需要equals()方法支持
+    - public boolean remove(Object o)--删除数据，需要equals()支持
+    - public int size()--获取集合的长度
+    - <T> T[] toArray(T[] a)-- 将集合变为对象数组返回
+    - public Iterator<T> iterator()-- 取得Iterator的接口对象，用于输出
+
+* 在实际开发中很少使用Collection接口，使用子接口，List(允许重复),Set(不允许重复)
+
+![IMG9](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/advanced_develop/other/imgs/img9.png)
+
+
+## List接口定义
+
+```java
+public interface List<E> extends Collection<E>{}
+```
+
+* 核心方法
+    - public E get(int index)--根据索引返回数据
+    - public E set(int index, E element)--根据索引修改数据
+
+* List与Collection相比最重要的方法是多了get方法
+* List本身还是接口，如果想取得对象，就要有子类，List的常用子类有三个，ArrayList,Vector,LinkedList
+
+![IMG10](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/advanced_develop/other/imgs/img10.png)
+
+## ArrayList
+
+* ArrayList是一个针对List接口的数组操作实现
+
+## Vector
+
+* ArrayList和Vector区别
+    - 历史时间：ArrayList--JDK1.2  Vector--JDK1.0
+    - 处理方式：ArrayList 异步处理，效率较高，Vector 同步处理，但效率较低
+    - 数据安全：ArrayList 线程不安全 Vector 线程安全
+    - ArrayList支持Iterator ListIterator foreach,Vector支持支持Iterator ListIterator foreach，Enumeration
+
+
+## LinkedList
+* ArrayList和LinkedList区别
+* ArrayList存放的是数组，如果不够了会进行动态扩充
+* 如果使用ArrayList最好设置初始化大小
+* LinkedList是一个完全的链表实现，双向链表，复杂度不同
+
+```java
+public ArrayList() {
+    this.elementData = DEFAULTCAPACITY_EMPTY_ELEMENTDATA;
+}
+
+public ArrayList(int initialCapacity) {
+    if (initialCapacity > 0) {
+        this.elementData = new Object[initialCapacity];
+    } else if (initialCapacity == 0) {
+        this.elementData = EMPTY_ELEMENTDATA;
+    } else {
+        throw new IllegalArgumentException("Illegal Capacity: "+
+                                           initialCapacity);
+    }
+}
+```
+
+
+## Set接口
+
+* Set没有对Collection的方法进行扩充，而List实现了扩充。
+* Set方法中没有Get
+* HashSet（无序）和TreeSet（升序排列）
+
+![IMG11](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/advanced_develop/other/imgs/img11.png)
+
+## Map集合（为了查找）
+
+* 保存偶对象（key-value）
+
+```java
+public interface Map<K,V>{}
+```
+
+* 常用方法
+    - public V put(K key,V value)向集合中加入数据
+    - public V get(Object key)根据对应的Key取得Value无Key返回Value
+    - public Set<K> keySet()取得所有的key信息,不能重复
+    - public Collection<V> values()取得value信息，可以重复
+    - public Set<Map.Entry<K,V>> entrySet()将Map集合编程Set集合
+
+* 子类
+    - HashMap(线程不安全，无序)
+    - HashTable
+    - TreeMap
+    - ConcurrentHashMap
+
+## HashMap
+
+* HashMap原理（线程不安全）
+    - 在数据量小的时候是按照链表存储的
+    - 当数据量变大之后，为了进行快速的查找，使用红黑树保存，用hash码定位进行保存
+
+## HashTable
+
+* 同步实现，线程安全，性能较差
+
+## ConcurrentHashMap
+
+* HashTable的线程安全性+HashMap的高性能
+
+```java
+public class ConcurrentHashMap<K,V> extends AbstractMap<K,V> implements ConcurrentMap<K,V>, Serializable{}
+```
+
+![IMG12](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/advanced_develop/other/imgs/img12.png)
+
+* ConcurrentHashMap工作原理
+    - 数据分桶--将大量数据平均分在不同的数据区域中，在进行数据查找时可以避免全部的数据扫描
+    - 每一个数据中要有一个分桶的标记(Hashcode)16个
+    - 16把写锁，每次写只锁当前数据块，其它不上锁
+    
+![IMG13](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/advanced_develop/other/imgs/img13.png)
 
 
 
