@@ -614,6 +614,15 @@ public class TestDemo {
 ![IMG16](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/advanced_develop/other/imgs/img16.png)
 
 * Accessible类中有一个重要方法:public void setAccessible(boolean flag) throws SecurityException
+* 取得属性类型--public Class<?> getType()
+
+
+
+## ClassLoader简介
+
+* Class类描述的是类的结构信息，forName方法是通过CLASSPATH进行加载，但如果通过网络，文件等进行加载，就需要ClassLoader类
+
+![IMG17](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/advanced_develop/other/imgs/img17.png)
 
 
 ## Collection集合接口（为了查找）
