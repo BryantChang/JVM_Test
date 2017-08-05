@@ -13,7 +13,7 @@ class Person {
 }
 
 class Student extends Person{
-    
+
 }
 
 public class TestDemo {

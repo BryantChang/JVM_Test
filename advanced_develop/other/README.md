@@ -618,11 +618,218 @@ public class TestDemo {
 
 
 
+
+
 ## ClassLoader简介
 
 * Class类描述的是类的结构信息，forName方法是通过CLASSPATH进行加载，但如果通过网络，文件等进行加载，就需要ClassLoader类
 
 ![IMG17](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/advanced_develop/other/imgs/img17.png)
+
+## 反射与代理设计模式
+
+* 代理设计模式的本质，一个接口有两个子类，一个负责真实业务，一个负责辅助操作
+* 传统实现
+
+```java
+interface ISubject {
+    public void eat();
+}
+
+class RealSubject implements ISubject {
+    @Override
+    public void eat() {
+        System.out.println("eating!!");
+    }
+}
+
+class Factory {
+    private Factory(){}
+    public static <T> T getInstance(String className) {
+        T t = null;
+        try {
+            t = (T)Class.forName(className).newInstance();
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
+        return t;
+    }
+
+    public static <T> T getInstance(String className, Object obj) {
+        T t = null;
+        try{
+            Constructor<?> constructor = Class.forName(className).getConstructor(obj.getClass().getInterfaces()[0]);
+            t = (T)constructor.newInstance(obj);
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
+        return t;
+    }
+}
+
+class ProxySubject implements ISubject {
+    private ISubject subject;
+
+    public ProxySubject(ISubject subject) {
+        this.subject = subject;
+    }
+
+    public void prepare() {
+        System.out.println("prepare");
+    }
+
+    @Override
+    public void eat() {
+        this.prepare();
+        subject.eat();
+        this.clear();
+    }
+
+    public void clear() {
+        System.out.println("clear");
+    }
+
+}
+public class TestDemo {
+    public static void main(String[] args) {
+        ISubject subject = Factory.getInstance("proxy.ProxySubject", Factory.getInstance("proxy.RealSubject"));
+        subject.eat();
+    }
+}
+```
+
+* 客户端唯一可能知道的是代理是谁，真实是谁.
+
+![IMG18](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/advanced_develop/other/imgs/img18.png)
+
+* 现在的问题是在开发中一个项目会有多少个接口，如果所有的接口都需要使用到代理类，每一个接口都需要实现两个子类，并且所有代理的功能几乎都一样
+* 这种代理模式只能代理一个接口的子类对象
+
+
+## 动态代理设计模式
+
+* 动态代理模式的核心特点：一个代理类可以所有需要被代理的子类对象
+
+* 动态代理标识接口
+
+```java
+//动态代理的标识接口，只有实现此接口的子类才具备有动态代理的功能
+public interface InvocationHandler {
+    //调用执行方法，但是所有的代理类返回给用户的接口对象都属于代理对象，当用户执行接口方法是所调用的实例化对象就是该代理主题动态创建创建的接口对象
+    //proxy--被代理的对象信息 method返回的是被调用的方法对象 args表示方法中接收的参数
+    Object invoke(Object proxy, Method method, Object[] args) throws Throwable(){}
+}
+```
+
+* 如果需要进行绑定，就需要使用Proxy程序类，这个程序类的主要功能就是可以绑定所有的需要绑定的接口子类对象，这些对象都是根据接口自动创建的
+
+* Proxy类
+    - 创建动态绑定对象的方法：public static Object newProxyInstance(ClassLoader loader,Class<?>[] interfaces,InvocationHandler h)throws IllegalArgumentException
+
+* 真实实现
+
+```java
+interface ISubject {
+    public void eat(String msg, int num);
+}
+
+class RealSubject implements ISubject {
+    @Override
+    public void eat(String msg, int num) {
+        System.out.println("我要吃" + num + "分量的" + msg);
+    }
+}
+
+class ProxySubject implements InvocationHandler{
+    private Object target; //绑定任意接口对象,使用Object描述
+
+    /**
+     * 实现真是的绑定处理,同时返回代理对象
+      * @param target
+     * @return 返回一个代理对象(这个对象是根据接口定义动态创建形成的代理对象)
+     */
+    public Object bind(Object target) {
+        this.target = target;//保存真实主题对象
+        return Proxy.newProxyInstance(target.getClass().getClassLoader(), target.getClass().getInterfaces(), this);
+    }
+
+    public void prepare() {
+        System.out.println("prepare");
+    }
+    public void clear() {
+        System.out.println("clear");
+    }
+    @Override
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        this.prepare();
+        Object ret = method.invoke(this.target, args);
+        this.clear();
+        return ret;
+    }
+}
+
+public class TestDemo {
+    public static void main(String[] args) {
+        ISubject subject = (ISubject)new ProxySubject().bind(new RealSubject());
+        subject.eat("aaa", 20);
+    }
+}
+```
+
+## cglib实现动态代理实现
+
+* 所有的代理设计模式的核心需要有接口
+* 如何不用接口实现动态代理设计模式
+* 需要将其配置到classpath中
+
+* 实现类继承的动态代理设计
+
+* 实现
+
+```java
+class Message {
+    public void send() {
+        System.out.println("hello world");
+    }
+}
+
+class MyProxy implements MethodInterceptor {
+    private Object target;
+
+    public MyProxy(Object target) {
+        this.target = target;
+    }
+
+
+    public void prepare() {
+        System.out.println("prepare");
+    }
+
+
+    public void clear() {
+        System.out.println("clear");
+    }
+    @Override
+    public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
+        this.prepare();
+        Object ret = method.invoke(this.target, objects);
+        this.clear();
+        return ret;
+    }
+}
+
+public class TestDemo {
+    public static void main(String[] args) {
+        Message msg = new Message();
+        Enhancer enhancer = new Enhancer();  //代理处理类,负责代理关系操作
+        enhancer.setSuperclass(msg.getClass());//把本类作为标识
+        enhancer.setCallback(new MyProxy(msg));//动态配置了类之间的代理关系
+
+        Message tmp = (Message)enhancer.create();
+        tmp.send();
+    }
+}
+```
 
 
 ## Collection集合接口（为了查找）
