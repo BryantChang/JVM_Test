@@ -480,6 +480,141 @@ public class TestDemo {
 }
 ```
 
+## Class相关方法
+
+* public Package getPackage()--获取包对象
+* public Class<? super T> getSuperclass()--获取父类的Class对象
+* public Class<?>[] getInterfaces()--获得所有的父接口
+* 通过反射可以取得所有类结构的关键信息
+
+
+## 反射与类操作
+
+* 取得指定类型的构造方法--public Constructor<T> getConstructor(Class<?>... parameterTypes) throws NoSuchMethodException, SecurityException
+* 取得类中的所有构造--public Constructor<?>[] getConstructors() throws SecurityException
+* 实例化对象--public T newInstance(Object... initargs) throws InstantiationException, IllegalAccessException, IllegalArgumentException,
+InvocationTargetException
+
+* 取得类中所有的构造方法信息
+* 讲解Constructor类的目的：在构建简单Java类时一定要保留一个默认的无参构造
+    - 通过Class进行实例化时，只能使用无参构造，如果没有默认的无参构造，就必须用显示的构造调用
+
+
+```java
+class Person {
+    private String name;
+    private int age;
+
+    public Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    @Override
+    public String toString() {
+        return "Person{" +
+                "name='" + name + '\'' +
+                ", age=" + age +
+                '}';
+    }
+}
+
+public class TestDemo {
+    public static void main(String[] args) throws Exception {
+        Class<?> cls = Person.class;
+        Constructor<?> cons = cls.getConstructor(String.class, int.class);
+        System.out.println(cons.newInstance("AAA", 1));
+    }
+}
+```
+
+## 反射调用方法
+
+* 取得全部方法：public Method[] getMethods() throws SecurityException
+* 取得指定的方法：public Method getMethod(String name, Class<?>... parameterTypes)throws NoSuchMethodException, SecurityException
+* Method中的核心方法
+    - public Object invoke(Object obj,Object... args) throws IllegalAccessException,IllegalArgumentException,InvocationTargetException--调用方法
+* 原先的setter和getter使用的都是显示对象的调用，即使没有明确的实例化对象（仍然要实例化）依旧可以调用
+* 此类操作的好处是不再局限于某一具体类型的对象，而是可以通过Object进行所有类的方法调用
+
+```java
+class Person {
+    private String name;
+    private int age;
+
+    public Person() {
+    }
+
+    public Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    @Override
+    public String toString() {
+        return "Person{" +
+                "name='" + name + '\'' +
+                ", age=" + age +
+                '}';
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+}
+
+public class TestDemo {
+    public static void main(String[] args) throws Exception {
+        String attribute = "name";
+        String value = "MLDN";
+        Class<?> cls = Class.forName("reflect.Person");
+        Object obj = cls.newInstance();
+        Method setName = cls.getMethod("set" + initCap(attribute), String.class);
+        setName.invoke(obj, value);//Person对象.setName(value)
+        Method getName = cls.getMethod("get" + initCap(attribute));
+        Object ret = getName.invoke(obj);
+        System.out.println(ret);
+
+
+    }
+
+    public static String initCap(String str) {
+        return str.substring(0,1).toUpperCase() + str.substring(1);
+    }
+}
+```
+
+
+
+## 反射调用成员
+
+* Class取得属性的操作方法
+    - public Field[] getFields() throws SecurityException取得全部属性
+    - public Field getField(String name) throws NoSuchFieldException, SecurityException--取得指定名称的属性
+    - public Field[] getDeclaredFields() throws SecurityException（本类）
+    - public Field getDeclaredField(String name) throws NoSuchFieldException, SecurityException（本类）
+* Field类中有两个重要方法
+    - public Object get(Object obj) throws IllegalArgumentException,IllegalAccessException
+    - public void set(Object obj, Object value) throws IllegalArgumentException, IllegalAccessException
+
+![IMG15](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/advanced_develop/other/imgs/img15.png)
+
+![IMG16](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/advanced_develop/other/imgs/img16.png)
+
+* Accessible类中有一个重要方法:public void setAccessible(boolean flag) throws SecurityException
+
 
 ## Collection集合接口（为了查找）
 
