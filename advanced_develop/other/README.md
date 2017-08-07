@@ -46,6 +46,85 @@ protected Object clone() throws CloneNotSupportedException
 
 * 不是所有类的对象都支持克隆，需要实现Cloneable接口，该接口没有任何抽象方法，只是一个标识接口，表示一种能力
 
+
+
+## 比较器
+
+* 基本比较器Comparable
+* 当一个类定义的时候，保存时就需要排序
+
+## 示例
+
+```java
+class Person implements Comparable<Person>{
+    private String name;
+    private int age;
+
+    public Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    @Override
+    public String toString() {
+        return "Person{" +
+                "name='" + name + '\'' +
+                ", age=" + age +
+                '}';
+    }
+
+    @Override
+    public int compareTo(Person o) {
+        return this.age - o.age;
+    }
+}
+
+public class TestDemo {
+    public static void main(String[] args) {
+        Person pers[] = new Person[] {
+                new Person("aaa", 10),
+                new Person("bbb", 20),
+                new Person("ccc", 30),
+        };
+        Arrays.sort(pers);
+        System.out.println(Arrays.toString(pers));
+    }
+}
+
+```
+
+## Comparator
+
+* 挽救型的比较器
+* 接口定义
+
+```java
+@FunctionalInterface
+public interface Comparator<T>{
+    public int compare(T o1, T o2) {}
+    public boolean equals(Object obj){}
+}
+```
+
+* 要想使用该类，就需要定义一个排序的子类
+* 定义一个为Person类对象排序的功能类
+
+
+```java
+class PersonComparator implements Comparator<Person> {
+    @Override
+    public int compare(Person o1, Person o2) {
+        return o1.getAge() - o2.getAge();
+    }
+}
+```
+
+* 请解释两种比较器的区别
+    - java.lang.Comparable
+        + 在一个类定义时就默认实现好的接口，里面存在有compareTo方法、
+    - java.util.Comparator
+        + 是一个挽救的比较接口，需要单独定义一个比较规则类，定义有compare方法，equals()方法
+
 ### 观察者设计模式
 
 * 观察者模式的两个程序结构
@@ -781,7 +860,6 @@ public class TestDemo {
 * 所有的代理设计模式的核心需要有接口
 * 如何不用接口实现动态代理设计模式
 * 需要将其配置到classpath中
-
 * 实现类继承的动态代理设计
 
 * 实现
@@ -830,6 +908,46 @@ public class TestDemo {
     }
 }
 ```
+
+
+## 反射取得Annotation
+
+* 需要有代码容器，才能实现自定义的Annotation
+* 通过反射取得所定义的Annotation信息
+* 在AccessibleObject中与Annotation有关的方法
+    - public Annotation[] getAnnotations()
+
+* Annotation有自己的作用范围
+
+## 自定义Annotation
+
+* Annotation的作用范围，在一个枚举类（java.lang.annotation.RetentionPolicy）中定义
+    - CLASS //类定义时出现的Annostation
+    - RUNTIME //程序执行时出现的Annostation
+    - SOURCE // 源代码中出现的Annostation
+
+```java
+@Retention(RetentionPolicy.RUNTIME)//次Annotation在运行时生效
+@interface MyAnnotation {
+    public String name() default "hello"; //定义了一个属性
+    public int age() default 10;
+}
+
+@MyAnnotation
+class Member implements Serializable {
+
+}
+
+public class TestDemo {
+    public static void main(String[] args) {
+        Annotation[] ant = Member.class.getAnnotations();
+        for (int i = 0; i < ant.length; i++) {
+            System.out.println(ant[i]);
+        }
+    }
+}
+```
+
 
 
 ## Collection集合接口（为了查找）
@@ -971,7 +1089,122 @@ public class ConcurrentHashMap<K,V> extends AbstractMap<K,V> implements Concurre
     
 ![IMG14](https://raw.githubusercontent.com/BryantChang/JVM_Test/master/advanced_develop/other/imgs/img14.png)
 
+## Stack
 
+* 后进先出的数据结构
+* 核心方法
+    - public E push(E item)
+    - public E pop() -- 弹出栈顶元素ll
+    - public E peek()--取栈顶
+
+## Queue
+
+* 先进先出
+* 利用队列修改生产者消费者模型
+
+
+## 生产者与消费者模型
+
+* wait() && notifyAll()
+
+```java
+class Person {
+    private int foodNum = 0;
+    private Object sysObj = new Object();
+    private final int MAX_NUM = 5;
+
+
+    public void produce() throws InterruptedException {
+        synchronized (sysObj) {
+            while(foodNum == 5) {
+                System.out.println("box is full, size= " + foodNum);
+                sysObj.wait();
+            }
+            foodNum++;
+            System.out.println(Thread.currentThread().getName() + "produce succ foodNum=" + foodNum);
+            sysObj.notifyAll();
+        }
+    }
+
+    public void consume() throws InterruptedException{
+        synchronized (sysObj) {
+            while(foodNum == 0) {
+                System.out.println("box is empty, size= " + foodNum);
+                sysObj.wait();
+            }
+            foodNum--;
+            System.out.println(Thread.currentThread().getName() +  "consume succ foodNum = " + foodNum);
+            sysObj.notifyAll();
+        }
+
+    }
+}
+
+
+class Producer implements Runnable {
+    private Person person;
+    private String producerName;
+
+    public Producer(String producerName, Person person) {
+        this.person = person;
+        this.producerName = producerName;
+    }
+
+    public String getProducerName() {
+        return producerName;
+    }
+
+    @Override
+    public void run() {
+        while (true) {
+            try {
+                person.produce();
+            }catch(Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+
+class Consumer implements Runnable {
+    private Person person;
+    private String consumerName;
+
+    public String getConsumerName() {
+        return consumerName;
+    }
+
+    public Consumer(String consumerName, Person person) {
+        this.person = person;
+        this.consumerName = consumerName;
+    }
+
+    @Override
+    public void run() {
+        while(true) {
+            try {
+                person.consume();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+public class TestDemo {
+    public static void main(String[] args) {
+        Person person = new Person();
+        new Thread(new Consumer("消费者一", person), "消费者一").start();
+        new Thread(new Consumer("消费者二", person), "消费者二").start();
+        new Thread(new Consumer("消费者三", person), "消费者三").start();
+
+        new Thread(new Producer("生产者一", person), "生产者一").start();
+        new Thread(new Producer("生产者一", person), "生产者二").start();
+        new Thread(new Producer("生产者一", person), "生产者三").start();
+    }
+}
+```
+
+* Lock
 
 
 
